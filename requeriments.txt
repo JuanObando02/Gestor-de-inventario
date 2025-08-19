@@ -1,0 +1,2 @@
+reportlab==4.2.2     #PDF
+openpyxl==3.1.5      #Excel

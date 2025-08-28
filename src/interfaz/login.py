@@ -3,9 +3,8 @@ from tkinter import messagebox
 import json
 from app import App  # Importamos la clase App de la ventana principal
 
-
 class Login:
-    def __init__(self, root):
+    def __init__(self, root): #constructor
         self.root = root
         self.root.title("Login - Gestor de Inventario")
         self.root.geometry("300x150")

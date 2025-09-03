@@ -32,7 +32,7 @@ cursor.execute (
     """ CREATE TABLE IF NOT EXISTS Productos (
             id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
             id_categoria INTEGER,
-            codigo INTEGER UNIQUE NOT NULL,
+            codigo TEXT UNIQUE NOT NULL,
             nombre VARCHAR(20) NOT NULL,
             descripcion VARCHAR(40),
             precio FLOAT NOT NULL,
@@ -79,12 +79,12 @@ cursor.execute (
 )
 
 #crear por defecto un usuario admin al crear la DB
-cursor.execute(
-    """
-        INSERT INTO usuarios (usuario, password, rol)
-        VALUES (?, ?, ?)
-    """, 
-    ("admin", "1234", "admin"))
+#cursor.execute(
+#    """
+#        INSERT INTO usuarios (usuario, password, rol)
+#        VALUES (?, ?, ?)
+#    """, 
+#    ("admin", "1234", "admin"))
 
 categorias = [
     "Abarrotes",
@@ -107,7 +107,7 @@ for cat in categorias:
 conn.commit()
 conn.close()
 
-print("Base de datos creada con éxito✅")
+print("Base de datos creada con exito")
 
 
 

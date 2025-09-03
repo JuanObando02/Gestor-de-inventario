@@ -1,6 +1,15 @@
 import sqlite3 as sql
 import os
 
+#informacion importante de la DB:
+# La tabla el codigo del producto no puede ser el mismo es unico
+# La tabla usuarios el usuario es unico.
+# tipo de movimiento es entrada o salida. agregar tipo de ajuste.
+# la tabla stock la cantidad del producto es not null. 
+# se creo admin 1234 pro defecto rol admin para pruebas 
+# se crearon categorias aleatoreas para pruebas. 
+
+
 # Ruta de la base de datos
 db_path = os.path.join("data", "inventario.db")
 
@@ -98,7 +107,7 @@ for cat in categorias:
 conn.commit()
 conn.close()
 
-print("Base de datos creada con éxito ✅")
+print("Base de datos creada con éxito✅")
 
 
 

@@ -1,2 +1,7 @@
 # === Entorno virtual ===
 entorno/
+
+# Ignorar cache de Python
+__pycache__/
+*.py[cod]
+*$py.class

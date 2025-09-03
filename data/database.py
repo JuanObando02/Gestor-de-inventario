@@ -1,6 +1,15 @@
 import sqlite3 as sql
 import os
 
+#informacion importante de la DB:
+# La tabla el codigo del producto no puede ser el mismo es unico
+# La tabla usuarios el usuario es unico.
+# tipo de movimiento es entrada o salida. agregar tipo de ajuste.
+# la tabla stock la cantidad del producto es not null. 
+# se creo admin 1234 pro defecto rol admin para pruebas 
+# se crearon categorias aleatoreas para pruebas. 
+
+
 # Ruta de la base de datos
 db_path = os.path.join("data", "inventario.db")
 
@@ -23,7 +32,7 @@ cursor.execute (
     """ CREATE TABLE IF NOT EXISTS Productos (
             id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
             id_categoria INTEGER,
-            codigo INTEGER UNIQUE NOT NULL,
+            codigo TEXT UNIQUE NOT NULL,
             nombre VARCHAR(20) NOT NULL,
             descripcion VARCHAR(40),
             precio FLOAT NOT NULL,
@@ -68,7 +77,38 @@ cursor.execute (
         );
     """
 )
+
+#crear por defecto un usuario admin al crear la DB
+#cursor.execute(
+#    """
+#        INSERT INTO usuarios (usuario, password, rol)
+#        VALUES (?, ?, ?)
+#    """, 
+#    ("admin", "1234", "admin"))
+
+categorias = [
+    "Abarrotes",
+    "Bebidas",
+    "Lácteos",
+    "Snacks y Dulces",
+    "Panadería",
+    "Frutas y Verduras",
+    "Carnes y Embutidos",
+    "Limpieza y Aseo",
+    "Cuidado Personal",
+    "Otros"
+]
+
+for cat in categorias:
+        cursor.execute("SELECT * FROM categorias WHERE nombre = ?", (cat,))
+        if cursor.fetchone() is None:
+            cursor.execute("INSERT INTO categorias (nombre) VALUES (?)", (cat,))
+
 conn.commit()
 conn.close()
 
-print("Base de datos creada con éxito ✅")
+print("Base de datos creada con exito")
+
+
+
+# Si la tabla Usuarios está vacía, insertar un usuario admin por defecto

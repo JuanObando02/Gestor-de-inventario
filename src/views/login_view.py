@@ -1,44 +1,49 @@
 import tkinter as tk
 from tkinter import messagebox
 from src.controllers import controlador_usuario
-from src.views.main_view import MainApp
+from src.views.main_view import MainApp   # <-- importa la ventana principal
 
 class LoginApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Login - Gestor de Inventario")
         self.root.geometry("300x180")
+        print("Pagina de Login Iniciada.")
 
         # Usuario
         tk.Label(root, text="Usuario:").pack(pady=5)
-        self.entry_user = tk.Entry(root)
-        self.entry_user.pack()
+        self.acceso_usuario = tk.Entry(root)
+        self.acceso_usuario.pack()
 
         # Contraseña
         tk.Label(root, text="Contraseña:").pack(pady=5)
-        self.entry_pass = tk.Entry(root, show="*")
-        self.entry_pass.pack()
+        self.password_acceso = tk.Entry(root, show="*")
+        self.password_acceso.pack()
 
         # Botón
-        tk.Button(root, text="Ingresar", command=self.login).pack(pady=10)
+        tk.Button(root, text="Ingresar", command=self.validar_login).pack(pady=10)
 
-    def login(self):
-        usuario = self.entry_user.get()
-        password = self.entry_pass.get()
+    def validar_login(self):
+        #solicitamos datos de ingreso.
+        usuario = self.acceso_usuario.get()
+        password = self.password_acceso.get()
 
+        #Validamos con nuestro controlador el usuario ingresado y la contraseña
         user = controlador_usuario.validate_login(usuario, password)
 
+        #Si se retorno un usuario:
         if user:
-            messagebox.showinfo("Éxito", f"Bienvenido {user.username} rol: ({user.role})")
+            messagebox.showinfo("Éxito", f"Bienvenido {user.username} ({user.role})")
             self.root.destroy()  # cerrar login
-            # Aquí puedes abrir la ventana principal del inventario
-            
+            print("Claves de acceso correctas, Login Cerrado.")
+
             # Crear la nueva ventana principal
             new_root = tk.Tk()
             MainApp(new_root, user)
             new_root.mainloop()
         else:
             messagebox.showerror("Error", "Usuario o contraseña incorrectos")
+            print("Claves de acceso Incorrectar. Intente nuevamente.")
 
 
 if __name__ == "__main__":

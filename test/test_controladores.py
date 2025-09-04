@@ -1,5 +1,7 @@
-import os, sys
 from src.controllers import controlador_usuario, controlador_producto 
+
+# para ejecutar este archivo
+# python -m unittest test/test_controladores.py
 
 #roles: admin, empleado
 # 🔹 1. Probar inserción de un usuario

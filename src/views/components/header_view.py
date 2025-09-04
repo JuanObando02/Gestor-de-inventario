@@ -1,18 +1,22 @@
 import tkinter as tk
 
 class Header(tk.Frame):
-    def __init__(self, parent, on_registro, on_exportar, on_salir):
-        super().__init__(parent, bg="#f0f0f0", height=80)
+
+
+    def __init__(self, ventana, bt_registrar, bt_exportar, bt_salir):
+        super().__init__(ventana, bg="#c1dd36", height=80)
         self.pack(fill="x")
+        # la ventana se expande horizontalmente y se mantiene en la parte superior con fill="x"
 
         # Logo
-        tk.Label(self, text="LOGO", bg="#d0d0d0", width=10, height=4).pack(side="left", padx=10, pady=10)
+        tk.Label(self, text="LOGO", bg="#2b03db", width=10, height=4).pack(side="left", padx=10, pady=10)
 
         # Botones
-        btn_frame = tk.Frame(self, bg="#f0f0f0")
-        btn_frame.pack(side="right", padx=10)
+        ventana_botones = tk.Frame(self, bg="#0485d0")
+        ventana_botones.pack(side="right", padx=10)
+        # ventada secundaria con los botones alineados a la derecha 
 
-        tk.Button(btn_frame, text="Registro", command = on_registro, bg="#7de986").pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Exportar", command = on_exportar).pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Salir", command = on_salir, bg="#d9534f", fg="white").pack(side="left", padx=5)
+        tk.Button(ventana_botones, text="Registro", command = bt_registrar, bg="#7de986")            .pack(side="left", padx=5)
+        tk.Button(ventana_botones, text="Exportar", command = bt_exportar,  bg="#ffffff")            .pack(side="left", padx=5)
+        tk.Button(ventana_botones, text="Salir",    command = bt_salir,     bg="#d9534f", fg="white").pack(side="left", padx=5)
         

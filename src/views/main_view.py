@@ -7,12 +7,13 @@ from src.views.components.search_view import SearchFilter
 class MainApp:
     def __init__(self, root, user):
         self.root = root
+        self.user = user
         self.root.title("Gestor de Inventario")
         self.root.geometry("900x600")
 
         # === Encabezado ===
         Header(root, self.registro, self.exportar, self.salir)
-        tk.Label(root, text="Bienvenido", font=("Arial", 24)).pack(pady=20)
+        tk.Label (root, text=f"Bienvenido", font=("Arial", 24)) .pack(pady=20)
 
         # === Buscador y Filtros ===
         #SearchFilter(self, on_search=self.search_products, on_filter=self.filter_products).pack(fill="x", pady=5)
@@ -50,6 +51,7 @@ class MainApp:
 
     def buscar(self):
         messagebox.showinfo("Buscar", f"Buscando: {self.search_entry.get()}")
+
 
     def ordenar(self, orden):
         messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")

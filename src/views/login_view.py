@@ -1,44 +1,48 @@
-import tkinter as tk
+import tkinter
 from tkinter import messagebox
 from src.controllers import controlador_usuario
 from src.views.main_view import MainApp   # <-- importa la ventana principal
 
+# ejecutar vista python -m src.views.login_view
+
 class LoginApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Login - Gestor de Inventario")
-        self.root.geometry("300x180")
+
+    # log es la ventana de login
+    def __init__(self, log):
+        self.log = log
+        self.log.title("Login - Gestor de Inventario")
+        self.log.geometry("300x180")
         print("Pagina de Login Iniciada.")
 
         # Usuario
-        tk.Label(root, text="Usuario:").pack(pady=5)
-        self.acceso_usuario = tk.Entry(root)
+        tkinter.Label(log, text="Usuario:").pack(pady=5)
+        self.acceso_usuario = tkinter.Entry(log)
         self.acceso_usuario.pack()
 
         # Contraseña
-        tk.Label(root, text="Contraseña:").pack(pady=5)
-        self.password_acceso = tk.Entry(root, show="*")
+        tkinter.Label(log, text="Contraseña:").pack(pady=5)
+        self.password_acceso = tkinter.Entry(log, show="*")
         self.password_acceso.pack()
 
         # Botón
-        tk.Button(root, text="Ingresar", command=self.validar_login).pack(pady=10)
+        tkinter.Button(log, text="Ingresar", command=self.validar).pack(pady=10)
 
-    def validar_login(self):
+    def validar(self):
         #solicitamos datos de ingreso.
         usuario = self.acceso_usuario.get()
         password = self.password_acceso.get()
 
-        #Validamos con nuestro controlador el usuario ingresado y la contraseña
+        #Validamos con nuestro controlador el usuario ingresado y la contraseña con la base de datos
         user = controlador_usuario.validate_login(usuario, password)
 
         #Si se retorno un usuario:
         if user:
             messagebox.showinfo("Éxito", f"Bienvenido {user.username} ({user.role})")
-            self.root.destroy()  # cerrar login
+            self.log.destroy()  # cerrar login
             print("Claves de acceso correctas, Login Cerrado.")
 
             # Crear la nueva ventana principal
-            new_root = tk.Tk()
+            new_root = tkinter.Tk()
             MainApp(new_root, user)
             new_root.mainloop()
         else:
@@ -47,6 +51,6 @@ class LoginApp:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = LoginApp(root)
-    root.mainloop()
+    ventana = tkinter.Tk()
+    app = LoginApp(ventana)
+    ventana.mainloop()

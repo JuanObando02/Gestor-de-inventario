@@ -1,26 +1,72 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
+from src.controllers import controlador_producto
+from src.views.components.header_view import Header
+from src.views.components.product_table import ProductTable
+from src.views.movement_view import VentanaMovimientos
+
 
 class MainApp:
     def __init__(self, root, user):
         self.root = root
+        self.user = user
         self.root.title("Gestor de Inventario")
-        self.root.geometry("600x400")
+        self.root.geometry("900x600")
 
-        # Bienvenida
-        label = tk.Label(root, text=f"Bienvenido {user.username} ({user.role})", font=("Arial", 14))
-        label.pack(pady=20)
+        # === Encabezado ===
+        Header(root, self.abrir_movimiento, self.exportar, self.salir)
+        tk.Label (root, text=f"Bienvenido", font=("Arial", 24)) .pack(pady=20)
 
-        # Botón de salir
-        tk.Button(root, text="Cerrar sesión", command=self.root.quit).pack(pady=10)
+        # === Buscador y Filtros ===
+        #SearchFilter(self, on_search=self.search_products, on_filter=self.filter_products).pack(fill="x", pady=5)
 
-        # Aquí podrías agregar botones para ir a: Productos, Categorías, Ventas, etc.
-        tk.Button(root, text="Gestión de Productos", command=self.gestion_productos).pack(pady=5)
-        tk.Button(root, text="Gestión de Usuarios", command=self.gestion_usuarios).pack(pady=5)
+        search_frame = tk.Frame(root)
+        search_frame.pack(fill="x", padx=20, pady=5)
 
-    def gestion_productos(self):
-        # Aquí luego abrirás otra ventana o frame
-        print("Abrir gestión de productos")
+        self.search_entry = tk.Entry(search_frame, width=40)
+        self.search_entry.pack(side="left", padx=5)
+        tk.Button(search_frame, text="Buscar", command=self.buscar).pack(side="left", padx=5)
 
-    def gestion_usuarios(self):
-        # Aquí luego abrirás otra ventana o frame
-        print("Abrir gestión de usuarios")
+        filtro = ttk.Combobox(search_frame, values=["Categoría", "Precio", "Stock"])
+        filtro.set("Filtrar por")
+        filtro.pack(side="left", padx=5)
+
+        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack(side="left", padx=5)
+        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(side="left", padx=5)
+                 
+
+        # === Tabla de Productos ===
+        # Crear tabla de productos
+        self.product_table = ProductTable(self.root)
+        self.product_table.pack(fill="both", expand=True)
+        # Cargar productos
+        self.cargar_productos_en_tabla()
+
+    def abrir_movimiento(self):
+        VentanaMovimientos(self.root,self.user,self.cargar_productos_en_tabla)
+
+    def cargar_productos_en_tabla(self):
+        productos = controlador_producto.get_all_products()
+        self.product_table.cargar_productos(productos)
+
+
+    def buscar(self):
+        messagebox.showinfo("Buscar", f"Buscando: {self.search_entry.get()}")
+
+    def ordenar(self, orden):
+        messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")
+
+    def registro(self):
+        messagebox.showinfo("Registro", "Abrir formulario de registro")
+
+    def exportar(self):
+        messagebox.showinfo("Exportar", "Exportando...")
+
+    def salir(self):
+        self.root.quit()
+
+    def search_products(self, query):
+        print("Buscar:", query)
+
+    def filter_products(self, filter_option):
+        print("Filtro:", filter_option)

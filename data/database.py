@@ -104,11 +104,12 @@ for cat in categorias:
         if cursor.fetchone() is None:
             cursor.execute("INSERT INTO categorias (nombre) VALUES (?)", (cat,))
 
-conn.commit()
-conn.close()
+
 
 print("Base de datos creada con exito")
 
+conn.commit()
+conn.close()
 
 
 # Si la tabla Usuarios está vacía, insertar un usuario admin por defecto

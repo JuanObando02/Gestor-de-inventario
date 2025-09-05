@@ -67,6 +67,15 @@ class LoginApp:
         self.password_acceso.grid(row=2, column=1, pady=10)
         #boton
         self.login_button.grid(row=3, column=0, columnspan=2, pady=30)
+<<<<<<< Updated upstream
+=======
+
+        frame.pack()
+
+
+     
+
+>>>>>>> Stashed changes
 
         frame.pack()
 

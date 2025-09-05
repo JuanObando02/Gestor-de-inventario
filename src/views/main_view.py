@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto
 from src.views.components.header_view import Header
-from src.views.components.search_view import SearchFilter
+from src.views.components.product_table import ProductTable
+
 
 class MainApp:
     def __init__(self, root, user):
@@ -33,21 +34,13 @@ class MainApp:
         tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(side="left", padx=5)
 
         # === Tabla de Productos ===
-        self.tree = ttk.Treeview(root, columns=("codigo", "nombre", "categoria", "descripcion", "cantidad", "precio"), show="headings")
-        self.tree.pack(fill="both", expand=True, padx=20, pady=10)
+        # Crear tabla de productos
+        self.product_table = ProductTable(self.root)
+        self.product_table.pack(fill="both", expand=True)
+        # Cargar productos
+        productos = controlador_producto.get_all_products()
+        self.product_table.cargar_productos(productos)
 
-        for col in ("codigo", "nombre", "categoria", "descripcion", "cantidad", "precio"):
-            self.tree.heading(col, text=col.capitalize())
-
-        self.cargar_productos()
-
-        # === Total ===
-        self.lbl_total = tk.Label(root, text="Total: $0", font=("Arial", 14))
-        self.lbl_total.pack(pady=10)
-
-    # === Funciones ===
-    def cargar_productos(self):
-        messagebox.showinfo("Cargar")
 
     def buscar(self):
         messagebox.showinfo("Buscar", f"Buscando: {self.search_entry.get()}")

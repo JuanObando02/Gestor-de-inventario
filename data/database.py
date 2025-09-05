@@ -104,11 +104,32 @@ for cat in categorias:
         if cursor.fetchone() is None:
             cursor.execute("INSERT INTO categorias (nombre) VALUES (?)", (cat,))
 
-conn.commit()
-conn.close()
+
 
 print("Base de datos creada con exito")
 
+
+productos_base = [
+    (1, "P011", "Arroz", "Arroz blanco 500g", 2500.0),
+    (1, "P012", "Frijol", "Frijol rojo 500g", 3000.0),
+    (1, "P003", "Lenteja", "Lenteja 500g", 2800.0),
+    (1, "P004", "Papa", "Papa criolla 1kg", 3500.0),
+    (1, "P005", "Cebolla", "Cebolla cabezona 1kg", 2000.0),
+    (1, "P006", "Tomate", "Tomate chonto 1kg", 2500.0),
+    (1, "P007", "Panela", "Panela en bloque 500g", 1800.0),
+    (1, "P008", "Aceite", "Aceite vegetal 1L", 8500.0),
+    (1, "P009", "Leche", "Leche entera 1L", 3500.0),
+    (1, "P010", "Huevos", "Docena de huevos", 12000.0)
+]
+
+cursor.executemany(
+    """INSERT OR IGNORE INTO Productos (id_categoria, codigo, nombre, descripcion, precio) 
+       VALUES (?, ?, ?, ?, ?)""",
+    productos_base
+)
+
+conn.commit()
+conn.close()
 
 
 # Si la tabla Usuarios está vacía, insertar un usuario admin por defecto

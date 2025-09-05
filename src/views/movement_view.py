@@ -2,19 +2,20 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_movimiento
 
-class MovementWindow(tk.Toplevel):
-    def __init__(self, parent, user):
+class VentanaMovimientos(tk.Toplevel):
+    def __init__(self, parent, user,on_complete_callback):
         super().__init__(parent)
         self.title("Registrar Movimiento de Inventario")
         self.geometry("400x350")
         self.user = user
+        self.on_complete_callback = on_complete_callback # Guarda la referencia a la función
 
         # Producto
         tk.Label(self, text="Producto:").pack(pady=5)
-        self.productos = controlador_producto.get_all()  # Lista de objetos Producto
+        self.productos = controlador_producto.get_all_products()  # Consulto todos los productos de la DB
         self.producto_cb = ttk.Combobox(
             self,
-            values=[f"{p.id_producto} - {p.nombre}" for p in self.productos],
+            values=[f"{p['codigo']} - {p['nombre']}" for p in self.productos],
             state="readonly",
             width=30
         )
@@ -58,14 +59,23 @@ class MovementWindow(tk.Toplevel):
 
             # Guardar movimiento en la DB
             controlador_movimiento.registrar_movimiento(
-                id_producto=producto.id_producto,
-                id_usuario=self.user.id_usuario,
+                id_producto = producto['id_producto'],
+                id_usuario=self.user.id_user,
                 tipo=tipo,
                 cantidad=cantidad
             )
 
-            messagebox.showinfo("Éxito", f"{tipo.capitalize()} registrada para {producto.nombre}")
+            messagebox.showinfo("Éxito", f"{tipo.capitalize()} registrada para {producto['nombre']}")
+
+            # Llama al callback para actualizar la tabla principal
+            if self.on_complete_callback:
+                self.on_complete_callback()
             self.destroy()
+                   
+
+        except ValueError as e:
+             messagebox.showerror("Error", str(e))
+            
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo registrar: {e}")

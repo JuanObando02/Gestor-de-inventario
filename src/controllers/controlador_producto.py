@@ -17,17 +17,43 @@ def add_product(codigo, nombre, descripcion, precio, categoria_id):
            VALUES (?, ?, ?, ?, ?)""",
         (codigo, nombre, descripcion, precio, categoria_id)
     )
+
+    id_producto = cur.lastrowid
+    
+    # Inicializar stock en 0
+    cur.execute("""
+        INSERT INTO Stock (id_producto, cantidad)
+        VALUES (?, 0)
+        """, (id_producto,))
+
     conn.commit()
     conn.close()
 
 def get_all_products():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Productos")
+    cur.execute("""
+            SELECT p.id_producto, p.codigo, p.nombre, p.id_categoria, p.descripcion, p.precio,
+                s.cantidad, c.nombre AS nombre_categoria
+            FROM Productos p
+            LEFT JOIN Stock s ON p.id_producto = s.id_producto
+            LEFT JOIN Categorias c ON p.id_categoria = c.id_categoria
+        """)
+
     rows = cur.fetchall() #lista de tuplas encontradas
     conn.close()
-    # convertir cada tupla en un objeto Producto y retornar una lista de productos
-    # for row in rows recorre cada tupla en la lista y crea un objeto 
-    # Producto con los valores desempaquetados (*row). 
-
-    return [Producto(*row) for row in rows]
+    
+    # lista de diccionarios
+    productos = []
+    for r in rows:
+        productos.append({
+            "id_producto": r[0],
+            "codigo": r[1],
+            "nombre": r[2],
+            "categoria_id": r[3],
+            "descripcion": r[4],
+            "precio": r[5],
+            "stock": r[6] if r[6] is not None else 0,
+            "nombre_categoria": r[7]
+        })
+    return productos

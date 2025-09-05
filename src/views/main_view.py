@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto
 from src.views.components.header_view import Header
 from src.views.components.product_table import ProductTable
+from src.views.movement_view import VentanaMovimientos
 
 
 class MainApp:
@@ -13,7 +14,7 @@ class MainApp:
         self.root.geometry("900x600")
 
         # === Encabezado ===
-        Header(root, self.registro, self.exportar, self.salir)
+        Header(root, self.abrir_movimiento, self.exportar, self.salir)
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24)) .pack(pady=20)
 
         # === Buscador y Filtros ===
@@ -32,19 +33,25 @@ class MainApp:
 
         tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack(side="left", padx=5)
         tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(side="left", padx=5)
+                 
 
         # === Tabla de Productos ===
         # Crear tabla de productos
         self.product_table = ProductTable(self.root)
         self.product_table.pack(fill="both", expand=True)
         # Cargar productos
+        self.cargar_productos_en_tabla()
+
+    def abrir_movimiento(self):
+        VentanaMovimientos(self.root,self.user,self.cargar_productos_en_tabla)
+
+    def cargar_productos_en_tabla(self):
         productos = controlador_producto.get_all_products()
         self.product_table.cargar_productos(productos)
 
 
     def buscar(self):
         messagebox.showinfo("Buscar", f"Buscando: {self.search_entry.get()}")
-
 
     def ordenar(self, orden):
         messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")

@@ -24,8 +24,22 @@ def registrar_movimiento(id_producto, id_usuario, tipo, cantidad):
     # tupla (cantidad,)
 
     stock_actual = result[0]
-    # si es entrada sumo, si es salida resto
-    nuevo_stock = stock_actual + cantidad if tipo == "entrada" else stock_actual - cantidad
+    
+    # calcular nuevo stock
+    if tipo == "entrada":
+        nuevo_stock = stock_actual + cantidad
+    elif tipo == "salida":
+        if cantidad > stock_actual:
+            raise ValueError("No hay suficiente stock para realizar la salida.")
+        nuevo_stock = stock_actual - cantidad
+    elif tipo == "inicial":
+        # Para el registro inicial del producto
+        nuevo_stock = cantidad
+    elif tipo == "ajuste":
+        # Para correcciones manuales de inventario
+        nuevo_stock = cantidad
+    else:
+        raise ValueError(f"Tipo de movimiento no válido: {tipo}")
     
     # verifico que no quede stock negativo
     if nuevo_stock < 0:

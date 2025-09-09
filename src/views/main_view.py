@@ -4,6 +4,7 @@ from src.controllers import controlador_producto
 from src.views.components.header_view import Header
 from src.views.components.product_table import ProductTable
 from src.views.movement_view import VentanaMovimientos
+from src.views.product_view import VentanaProducto
 
 
 class MainApp:
@@ -33,6 +34,7 @@ class MainApp:
 
         tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack(side="left", padx=5)
         tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(side="left", padx=5)
+        tk.Button(search_frame, text="Nuevo Producto", command=self.registro_producto).pack(side="left", padx=5)
                  
 
         # === Tabla de Productos ===
@@ -42,8 +44,11 @@ class MainApp:
         # Cargar productos
         self.cargar_productos_en_tabla()
 
+    def registro_producto(self):
+        VentanaProducto(self.root, self.user, self.cargar_productos_en_tabla)
+
     def abrir_movimiento(self):
-        VentanaMovimientos(self.root,self.user,self.cargar_productos_en_tabla)
+        VentanaMovimientos(self.root, self.user, self.cargar_productos_en_tabla)
 
     def cargar_productos_en_tabla(self):
         productos = controlador_producto.get_all_products()
@@ -55,9 +60,6 @@ class MainApp:
 
     def ordenar(self, orden):
         messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")
-
-    def registro(self):
-        messagebox.showinfo("Registro", "Abrir formulario de registro")
 
     def exportar(self):
         messagebox.showinfo("Exportar", "Exportando...")

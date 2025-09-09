@@ -9,25 +9,37 @@ def get_connection():
     return sql.connect(db_path)
 
 #agregar un producto a la base de datos
-def add_product(codigo, nombre, descripcion, precio, categoria_id):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        """INSERT INTO Productos (codigo, nombre, descripcion, precio, id_categoria)
-           VALUES (?, ?, ?, ?, ?)""",
-        (codigo, nombre, descripcion, precio, categoria_id)
-    )
+    try:
+        # Insertar producto
+        cur.execute(
+            """INSERT INTO Productos (codigo, nombre, descripcion, precio, id_categoria)
+               VALUES (?, ?, ?, ?, ?)""",
+            (codigo, nombre, descripcion, precio, categoria_id)
+        )
 
-    id_producto = cur.lastrowid
-    
-    # Inicializar stock en 0
-    cur.execute("""
-        INSERT INTO Stock (id_producto, cantidad)
-        VALUES (?, 0)
-        """, (id_producto,))
+        id_producto = cur.lastrowid
 
-    conn.commit()
-    conn.close()
+        # Inicializar stock en 0
+        cur.execute(
+            "INSERT INTO Stock (id_producto, cantidad) VALUES (?, 0)",
+            (id_producto,)
+        )
+
+        conn.commit()
+        return id_producto
+        
+
+    except sql.IntegrityError as e:
+        
+        # Captura de error si el código ya existe (colisión en UNIQUE)
+        if "UNIQUE constraint failed" in str(e):
+            raise ValueError(f"El código '{codigo}' ya existe. Debe ser único.")
+        else:
+            raise
+    finally:
+        conn.close()
 
 def get_all_products():
     conn = get_connection()

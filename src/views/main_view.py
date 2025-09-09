@@ -50,15 +50,42 @@ class MainApp:
     def abrir_movimiento(self):
         VentanaMovimientos(self.root, self.user, self.cargar_productos_en_tabla)
 
-    def cargar_productos_en_tabla(self):
-        productos = controlador_producto.get_all_products()
-        self.product_table.cargar_productos(productos)
+    def cargar_productos_en_tabla(self, productos=None):
+        """Carga los productos en la tabla. Si no recibe lista, consulta la DB."""
+        # limpiar tabla
+        for row in self.product_table.tree.get_children():
+            self.product_table.tree.delete(row)
 
+        if productos is None:
+            productos = controlador_producto.get_all_products()  # <-- tu consulta a DB
+
+        # insertar filas
+        for p in productos:
+            self.product_table.tree.insert(
+                "", "end",
+                values=(p["codigo"], p["nombre"], p["categoria_id"], p["descripcion"], p["precio"], p["stock"], "Editar | Eliminar")
+            )
 
     def buscar(self):
-        messagebox.showinfo("Buscar", f"Buscando: {self.search_entry.get()}")
+        """Filtra productos por lo que escriba el usuario en el search_entry."""
+        texto = self.search_entry.get().lower()
 
-    def ordenar(self, orden):
+        productos = controlador_producto.get_all_products()
+        filtrados = [
+            p for p in productos
+            if texto in p["codigo"].lower()
+            or texto in p["nombre"].lower()
+            or texto in p["nombre_categoria"].lower()
+        ]
+
+        self.cargar_productos_en_tabla(filtrados)
+
+    def ordenar(self, orden="ASC"):
+        """Ordena los productos por stock."""
+        productos = controlador_producto.get_all_products()
+        productos.sort(key=lambda x: x["stock"], reverse=(orden == "DESC"))
+        self.cargar_productos_en_tabla(productos)
+
         messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")
 
     def exportar(self):

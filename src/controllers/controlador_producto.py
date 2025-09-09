@@ -9,6 +9,7 @@ def get_connection():
     return sql.connect(db_path)
 
 #agregar un producto a la base de datos
+def add_product(codigo, nombre, descripcion, precio, categoria_id):
     conn = get_connection()
     cur = conn.cursor()
     try:

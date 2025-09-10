@@ -18,40 +18,26 @@ class ProductTable(ttk.Frame):
         self.tree.column("codigo", width=40, anchor="center")
 
         self.tree.heading("nombre", text="Nombre")
-        self.tree.column("nombre", width=120, anchor="w")
+        self.tree.column("nombre", width=170, anchor="w")
 
         self.tree.heading("categoria", text="Categoría")
-        self.tree.column("categoria", width=50, anchor="center")
+        self.tree.column("categoria", width=80, anchor="center")
 
         self.tree.heading("descripcion", text="Descripción")
-        self.tree.column("descripcion", width=200, anchor="w")
+        self.tree.column("descripcion", width=250, anchor="w")
 
         self.tree.heading("precio", text="Precio")
-        self.tree.column("precio", width=100, anchor="e")
+        self.tree.column("precio", width=30, anchor="e")
 
         self.tree.heading("stock", text="Stock")
-        self.tree.column("stock", width=80, anchor="center")
+        self.tree.column("stock", width=50, anchor="center")
 
         # Nueva columna de acciones
         self.tree.heading("acciones", text="Acciones")
-        self.tree.column("acciones", width=150, anchor="center")
+        self.tree.column("acciones", width=100, anchor="center")
 
         # Doble click para detectar acciones
         self.tree.bind("<Double-1>", self.on_double_click)
-
-    def cargar_productos(self, productos):
-        # Limpia antes de cargar
-        for row in self.tree.get_children():
-            self.tree.delete(row)
-
-        # Inserta los productos
-        for p in productos:
-            self.tree.insert(
-                "",
-                "end",
-                values=(p["codigo"],p["nombre"],p["nombre_categoria"], p["descripcion"],p["precio"],p["stock"],"Editar | Eliminar"
-                )
-            )
 
     def on_double_click(self, event):
         item = self.tree.identify_row(event.y)

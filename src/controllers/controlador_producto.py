@@ -56,7 +56,7 @@ def get_all_products():
     rows = cur.fetchall() #lista de tuplas encontradas
     conn.close()
     
-    # lista de diccionarios
+    # convertimos las tuplas en diccionarios para facilitar su uso
     productos = []
     for r in rows:
         productos.append({
@@ -69,4 +69,5 @@ def get_all_products():
             "stock": r[6] if r[6] is not None else 0,
             "nombre_categoria": r[7]
         })
+    #retorna la lista de diccionarios
     return productos

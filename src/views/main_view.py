@@ -15,32 +15,29 @@ class MainApp:
         self.root.geometry("900x600")
 
         # === Encabezado ===
-        Header(root, self.abrir_movimiento, self.exportar, self.salir)
+        Header(root, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24)) .pack(pady=20)
 
         # === Buscador y Filtros ===
-        #SearchFilter(self, on_search=self.search_products, on_filter=self.filter_products).pack(fill="x", pady=5)
 
         search_frame = tk.Frame(root)
         search_frame.pack(fill="x", padx=20, pady=5)
 
         self.search_entry = tk.Entry(search_frame, width=40)
         self.search_entry.pack(side="left", padx=5)
-        tk.Button(search_frame, text="Buscar", command=self.buscar).pack(side="left", padx=5)
+        tk.Button(search_frame, text="Buscar", command = self.buscar).pack(side="left", padx=5)
 
         filtro = ttk.Combobox(search_frame, values=["Categoría", "Precio", "Stock"])
         filtro.set("Filtrar por")
         filtro.pack(side="left", padx=5)
 
-        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack(side="left", padx=5)
-        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(side="left", padx=5)
-        tk.Button(search_frame, text="Nuevo Producto", command=self.registro_producto).pack(side="left", padx=5)
-                 
-
+        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack( side="left", padx=5)
+        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(  side="left", padx=5)
+        
         # === Tabla de Productos ===
         # Crear tabla de productos
         self.product_table = ProductTable(self.root)
-        self.product_table.pack(fill="both", expand=True)
+        self.product_table.pack(fill = "both", expand=True)
         # Cargar productos
         self.cargar_productos_en_tabla()
 
@@ -50,20 +47,21 @@ class MainApp:
     def abrir_movimiento(self):
         VentanaMovimientos(self.root, self.user, self.cargar_productos_en_tabla)
 
-    def cargar_productos_en_tabla(self, productos=None):
-        """Carga los productos en la tabla. Si no recibe lista, consulta la DB."""
+    def cargar_productos_en_tabla(self, productos = None):
+        """Carga los productos en la tabla. Si no recibe lista de diccionarios, consulta la DB."""
         # limpiar tabla
         for row in self.product_table.tree.get_children():
             self.product_table.tree.delete(row)
 
         if productos is None:
-            productos = controlador_producto.get_all_products()  # <-- tu consulta a DB
+            #usar controlador para obtener productos
+            productos = controlador_producto.get_all_products()
 
         # insertar filas
         for p in productos:
             self.product_table.tree.insert(
                 "", "end",
-                values=(p["codigo"], p["nombre"], p["categoria_id"], p["descripcion"], p["precio"], p["stock"], "Editar | Eliminar")
+                values=(p["codigo"], p["nombre"], p["nombre_categoria"], p["descripcion"], p["precio"], p["stock"], "Editar | Eliminar")
             )
 
     def buscar(self):

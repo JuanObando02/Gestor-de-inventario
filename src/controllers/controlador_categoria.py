@@ -4,7 +4,7 @@ import os
 db_path = os.path.join("data", "inventario.db")
 
 def get_connection():
-    return sql.connect(db_path)
+    return sql.connect(db_path, timeout=10)
 
 # Obtener todas las categorías
 def get_all_categorias():

@@ -6,57 +6,67 @@ from src.models.producto import Producto
 db_path = os.path.join("data", "inventario.db")
 
 def get_connection():
-    return sql.connect(db_path)
+    return sql.connect(db_path, timeout=5)
 
 #agregar un producto a la base de datos
 def add_product(codigo, nombre, descripcion, precio, categoria_id):
-    conn = get_connection()
-    cur = conn.cursor()
     try:
-        # Insertar producto
-        cur.execute(
-            """INSERT INTO Productos (codigo, nombre, descripcion, precio, id_categoria)
-               VALUES (?, ?, ?, ?, ?)""",
-            (codigo, nombre, descripcion, precio, categoria_id)
-        )
-
-        id_producto = cur.lastrowid
-
-        # Inicializar stock en 0
-        cur.execute(
-            "INSERT INTO Stock (id_producto, cantidad) VALUES (?, 0)",
-            (id_producto,)
-        )
-
-        conn.commit()
-        return id_producto
+        with get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                """INSERT INTO Productos (codigo, nombre, descripcion, precio, id_categoria)
+                   VALUES (?, ?, ?, ?, ?)""",
+                (codigo, nombre, descripcion, precio, categoria_id)
+            )
+            id_producto = cur.lastrowid
+            cur.execute(
+                "INSERT INTO Stock (id_producto, cantidad) VALUES (?, 0)",
+                (id_producto,)
+            )
+            return id_producto
         
-
     except sql.IntegrityError as e:
-        
-        # Captura de error si el código ya existe (colisión en UNIQUE)
+
         if "UNIQUE constraint failed" in str(e):
             raise ValueError(f"El código '{codigo}' ya existe. Debe ser único.")
         else:
             raise
-    finally:
-        conn.close()
 
+# eliminar un producto de la base de datos
+def delete_product(id_producto):
+    with get_connection() as conn:
+        cur = conn.cursor()
+
+        # Verificar stock
+        cur.execute("SELECT cantidad FROM Stock WHERE id_producto = ?", (id_producto,))
+        result = cur.fetchone()
+        if result and result[0] > 0:
+            raise ValueError("No se puede eliminar un producto con stock disponible.")
+
+        # Eliminar primero el registro en Stock
+        cur.execute("DELETE FROM Stock WHERE id_producto = ?", (id_producto,))
+        # También eliminar movimientos
+        cur.execute("DELETE FROM Movimientos WHERE id_producto = ?", (id_producto,))
+        # Finalmente eliminar producto
+        cur.execute("DELETE FROM Productos WHERE id_producto = ?", (id_producto,))
+
+        conn.commit()
+
+# obtener todos los productos
 def get_all_products():
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("""
-            SELECT p.id_producto, p.codigo, p.nombre, p.id_categoria, p.descripcion, p.precio,
-                s.cantidad, c.nombre AS nombre_categoria
-            FROM Productos p
-            LEFT JOIN Stock s ON p.id_producto = s.id_producto
-            LEFT JOIN Categorias c ON p.id_categoria = c.id_categoria
-        """)
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+                SELECT p.id_producto, p.codigo, p.nombre, p.id_categoria, p.descripcion, p.precio,
+                    s.cantidad, c.nombre AS nombre_categoria
+                FROM Productos p
+                LEFT JOIN Stock s ON p.id_producto = s.id_producto
+                LEFT JOIN Categorias c ON p.id_categoria = c.id_categoria
+            """)
 
-    rows = cur.fetchall() #lista de tuplas encontradas
-    conn.close()
-    
-    # convertimos las tuplas en diccionarios para facilitar su uso
+        rows = cur.fetchall()
+
+    # convertimos las tuplas en diccionarios
     productos = []
     for r in rows:
         productos.append({
@@ -69,5 +79,4 @@ def get_all_products():
             "stock": r[6] if r[6] is not None else 0,
             "nombre_categoria": r[7]
         })
-    #retorna la lista de diccionarios
     return productos

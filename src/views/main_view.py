@@ -36,7 +36,7 @@ class MainApp:
         
         # === Tabla de Productos ===
         # Crear tabla de productos
-        self.product_table = ProductTable(self.root)
+        self.product_table = ProductTable(self.root, self)
         self.product_table.pack(fill = "both", expand=True)
         # Cargar productos
         self.cargar_productos_en_tabla()
@@ -91,9 +91,3 @@ class MainApp:
 
     def salir(self):
         self.root.quit()
-
-    def search_products(self, query):
-        print("Buscar:", query)
-
-    def filter_products(self, filter_option):
-        print("Filtro:", filter_option)

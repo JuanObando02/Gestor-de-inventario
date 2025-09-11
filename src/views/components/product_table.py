@@ -1,8 +1,10 @@
 from tkinter import ttk, messagebox
+from src.controllers import controlador_producto
 
 class ProductTable(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, main_view):
         super().__init__(parent)
+        self.main_view = main_view 
 
         # === Tabla de Productos ===
         self.tree = ttk.Treeview(
@@ -49,6 +51,7 @@ class ProductTable(ttk.Frame):
         producto = self.tree.item(item, "values")
         
         # Columna de acciones
+
         if col == "#7":  # la columna "acciones"
             # Aquí decides si es Editar o Eliminar según la posición del click
             x, y, widget = event.x, event.y, event.widget
@@ -59,5 +62,32 @@ class ProductTable(ttk.Frame):
             click_x = x - bbox[0]
             if click_x < bbox[2] // 2:
                 messagebox.showinfo("Editar", f"Editar producto: {producto[1]}")
+
             else:
-                messagebox.showinfo("Eliminar", f"Eliminar producto: {producto[1]}")
+                # Verificar permisos
+                if self.main_view.user.role != "admin":
+                    messagebox.showerror("Permiso denegado", "Solo los administradores pueden eliminar productos.")
+                    print("self.main_view.user:", self.main_view.user)
+                    return
+                print("self.main_view.user:", self.main_view.user)
+
+                try:
+                # Aquí necesitamos el id_producto para borrar
+                    codigo = producto[0]
+                    # Recuperar producto de DB
+                    productos = controlador_producto.get_all_products()
+                    prod = next((p for p in productos if str(p["codigo"]) == str(codigo)), None)
+
+                    if not prod:
+                        messagebox.showerror("Error", "Producto no encontrado.")
+                        return
+
+                    # Confirmación
+                    if messagebox.askyesno("Confirmar", f"¿Seguro que deseas eliminar {prod['nombre']}?"):
+                        controlador_producto.delete_product(prod["id_producto"])
+                        messagebox.showinfo("Éxito", f"Producto {prod['nombre']} eliminado.")
+                        # refrescar tabla
+                        self.main_view.cargar_productos_en_tabla()
+
+                except ValueError as e:
+                    messagebox.showerror("Error", str(e))

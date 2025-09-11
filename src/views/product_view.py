@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_categoria, controlador_movimiento
+from src.views.category_view import VentanaCategorias
 
 class VentanaProducto(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback, producto=None):
@@ -39,15 +40,22 @@ class VentanaProducto(tk.Toplevel):
 
        # === Categoría ===
         tk.Label(self, text="Categoría:").pack(pady=5)
+
+        frame_cat = tk.Frame(self)
+        frame_cat.pack(pady=5)
+
         self.categorias = controlador_categoria.get_all_categorias()
 
         # Combobox con nombres de categorías
         self.categoria_cb = ttk.Combobox(
-            self,
+            frame_cat,
             values=[c[1] for c in self.categorias],  # solo nombres
             state="readonly"
         )
-        self.categoria_cb.pack()
+        self.categoria_cb.pack(side="left", padx=5)
+
+        # Botón para abrir ventana de categorías
+        tk.Button(frame_cat, text="⚙️", command = self.abrir_gestion_categorias).pack(side="left")
 
         # === Botón Guardar ===
         tk.Button(self, text="Guardar", command=self.guardar_producto).pack(pady=20)
@@ -142,3 +150,10 @@ class VentanaProducto(tk.Toplevel):
         # Captura otros errores
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo registrar: {e}")
+
+    def abrir_gestion_categorias(self):
+        def refrescar_categorias():
+            self.categorias = controlador_categoria.get_all_categorias()
+            self.categoria_cb["values"] = [c[1] for c in self.categorias]
+
+        VentanaCategorias(self, refrescar_categorias)

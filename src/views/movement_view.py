@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_movimiento
 
 class VentanaMovimientos(tk.Toplevel):
-    def __init__(self, parent, user,on_complete_callback):
+    def __init__(self, parent, user, on_complete_callback):
         super().__init__(parent)
         self.title("Registrar Movimiento de Inventario")
         self.geometry("400x350")

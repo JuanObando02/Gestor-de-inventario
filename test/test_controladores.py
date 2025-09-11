@@ -6,7 +6,8 @@ from src.controllers import controlador_usuario, controlador_producto
 #roles: admin, empleado
 # 🔹 1. Probar inserción de un usuario
 print("=== TEST USUARIOS ===")
-controlador_usuario.insert_user("admin", "1234", "empleado")
+controlador_usuario.insert_user("admin", "1234", "admin")
+controlador_usuario.insert_user("juan", "1234", "empleado")
 
 user = controlador_usuario.get_user("admin")
 print("Usuario recuperado:", user)

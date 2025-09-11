@@ -58,7 +58,7 @@ cursor.execute (
             id_movimiento INTEGER PRIMARY KEY AUTOINCREMENT,
             id_producto INTEGER NOT NULL,
             id_usuario INTEGER NOT NULL,
-            tipo TEXT CHECK(tipo IN ('entrada', 'salida')) NOT NULL,
+            tipo TEXT CHECK(tipo IN ('entrada', 'salida', 'ajuste', 'inicial')) NOT NULL,
             cantidad INTEGER NOT NULL,
             fecha_registro DATE DEFAULT (date('now')),
             FOREIGN KEY (id_producto) REFERENCES Productos(id_producto),

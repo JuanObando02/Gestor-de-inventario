@@ -8,7 +8,7 @@ from src.models.user import User
 db_path = os.path.join("data", "inventario.db")
 
 def get_connection(): 
-    return sql.connect(db_path)
+    return sql.connect(db_path, timeout=10)
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()

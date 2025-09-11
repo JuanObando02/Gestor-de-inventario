@@ -3,12 +3,13 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_categoria, controlador_movimiento
 
 class VentanaProducto(tk.Toplevel):
-    def __init__(self, parent, user, on_complete_callback):
+    def __init__(self, parent, user, on_complete_callback, producto=None):
         super().__init__(parent)
         self.title("Registrar Producto")
         self.geometry("400x500")
         self.on_complete_callback = on_complete_callback
         self.user = user
+        self.producto = producto  # No se usa en esta versión, pero podría ser útil para editar
 
         fuente = ("Arial", 12)
         # === Código ===
@@ -51,6 +52,25 @@ class VentanaProducto(tk.Toplevel):
         # === Botón Guardar ===
         tk.Button(self, text="Guardar", command=self.guardar_producto).pack(pady=20)
 
+        if self.producto:
+            self.precargar_datos()
+
+    def precargar_datos(self):
+        self.codigo_entry.insert(0, self.producto["codigo"])
+        self.nombre_entry.insert(0, self.producto["nombre"])
+        self.precio_entry.insert(0, str(self.producto["precio"]))
+        self.descripcion_entry.insert("1.0", self.producto["descripcion"])
+
+        # Bloquear edición de código y cantidad
+        self.codigo_entry.config(state="disabled")
+        self.cantidad_entry.insert(0, str(self.producto["stock"]))
+        self.cantidad_entry.config(state="disabled")
+        # Buscar categoría
+        for idx, c in enumerate(self.categorias):
+            if c[0] == self.producto["categoria_id"]:
+                self.categoria_cb.current(idx)
+                break
+
     def guardar_producto(self):
 
         try:
@@ -76,31 +96,40 @@ class VentanaProducto(tk.Toplevel):
             if index == -1:
                 messagebox.showerror("Error", "Debe seleccionar una categoría")
                 return
+            id_categoria = self.categorias[index][0]  # obtiene el id_categoria
 
             if not codigo or not nombre:
                 messagebox.showerror("Error", "Código y Nombre son obligatorios")
                 return
             
-            id_categoria = self.categorias[index][0]  # obtiene el id_categoria
-
-            # Guardar en la DB
-            id_producto = controlador_producto.add_product(
-                codigo=codigo,
-                nombre=nombre,
-                descripcion=descripcion,
-                precio=precio,
-                categoria_id=id_categoria
-            )
-            
-            if cantidad_inicial > 0:
-                controlador_movimiento.registrar_movimiento(
-                    id_producto = id_producto,
-                    id_usuario = self.user.id_user,  # aquí pondrías el id del usuario logueado
-                    tipo = "inicial",
-                    cantidad=cantidad_inicial
+            if self.producto:  
+                # === EDITAR ===
+                controlador_producto.update_product(
+                    self.producto["id_producto"],
+                    self.producto["codigo"],   # usamos el código original
+                    nombre,
+                    descripcion,
+                    precio,
+                    id_categoria
                 )
+                messagebox.showinfo("Éxito", f"Producto '{nombre}' actualizado correctamente")
 
-            messagebox.showinfo("Éxito", f"Producto '{nombre}' registrado correctamente")
+            else:
+                id_producto = controlador_producto.add_product(
+                    codigo=codigo,
+                    nombre=nombre,
+                    descripcion=descripcion,
+                    precio=precio,
+                    categoria_id=id_categoria
+                )
+                if cantidad_inicial > 0:
+                    controlador_movimiento.registrar_movimiento(
+                        id_producto=id_producto,
+                        id_usuario=self.user.id_user,
+                        tipo="inicial",
+                        cantidad=cantidad_inicial
+                    )
+                messagebox.showinfo("Éxito", f"Producto '{nombre}' registrado correctamente")
 
             # Refrescar tabla principal
             if self.on_complete_callback:

@@ -52,6 +52,32 @@ def delete_product(id_producto):
 
         conn.commit()
 
+# actualizar un producto en la base de datos
+def update_product(id_producto, codigo, nombre, descripcion, precio, categoria_id):
+    try:
+        with get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                """UPDATE Productos
+                   SET codigo = ?,
+                       nombre = ?,
+                       descripcion = ?,
+                       precio = ?,
+                       id_categoria = ?
+                   WHERE id_producto = ?""",
+                (codigo, nombre, descripcion, precio, categoria_id, id_producto)
+            )
+            conn.commit()
+
+            if cur.rowcount == 0:
+                raise ValueError(f"No se encontró el producto con ID {id_producto}")
+
+    except sql.IntegrityError as e:
+        if "UNIQUE constraint failed" in str(e):
+            raise ValueError(f"El código '{codigo}' ya existe. Debe ser único.")
+        else:
+            raise
+
 # obtener todos los productos
 def get_all_products():
     with get_connection() as conn:

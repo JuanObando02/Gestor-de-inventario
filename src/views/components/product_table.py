@@ -61,7 +61,14 @@ class ProductTable(ttk.Frame):
 
             click_x = x - bbox[0]
             if click_x < bbox[2] // 2:
-                messagebox.showinfo("Editar", f"Editar producto: {producto[1]}")
+                # Buscar el producto en DB
+                codigo = producto[0]
+                productos = controlador_producto.get_all_products()
+                prod = next((p for p in productos if str(p["codigo"]) == str(codigo)), None)
+
+                if prod:
+                    from src.views.product_view import VentanaProducto
+                    VentanaProducto(self, self.main_view.user, self.main_view.cargar_productos_en_tabla, producto = prod)
 
             else:
                 # Verificar permisos

@@ -22,26 +22,28 @@ class LoginApp:
         self.log.title("Login - Gestor de Inventario")
         self.log.geometry(f"{ancho}x{alto}+{x}+{y}")
         print("Pagina de Login Iniciada.")
-        color="#333333"
+        color="#B6B6B6"
+        colorLetra="#000000"
+         #Color de fondo de la ventana
         self.log.config(bg=color)
         #Creando el Frame de login dentro de la ventana Log 
         frame = tkinter.Frame(bg=color)
         frame.winfo_geometry()
 
         #Creando los wdigets
-        self.login_label = tkinter.Label(frame, text="Iniciar Sesión",bg=color, fg="#1D80AB", font=("Arial", 30))
+        self.login_label = tkinter.Label(frame, text="Iniciar Sesión",bg=color, fg="#210ed1", font=("Arial", 30))
         #Usuario
-        self.nombre_label = tkinter.Label(frame, text="Usuario:", bg=color, fg="white", font=("Arial", 16))
+        self.nombre_label = tkinter.Label(frame, text="Usuario:", bg=color, fg=colorLetra, font=("Arial", 16))
         self.acceso_usuario = tkinter.Entry(frame, font=("Arial", 16))
         #Contraseña
-        self.contraseña_label = tkinter.Label(frame, text="Contraseña:", bg=color, fg="white", font=("Arial", 16))
+        self.contraseña_label = tkinter.Label(frame, text="Contraseña:", bg=color, fg=colorLetra, font=("Arial", 16))
         self.password_acceso = tkinter.Entry(frame, show="*", font=("Arial", 16))
         #Boton de login
-        self.login_button = tkinter.Button(frame, text="Ingresar", command=self.validar, bg="#148CBF", fg="white", font=("Arial", 16))
+        self.login_button = tkinter.Button(frame, text="Ingresar", command=self.validar, bg="#210ed1", fg="white", font=("Arial", 16))
 
 
         #Colocando los widgets en la ventana
-        self.login_label.grid(row=0, column=1, columnspan=2, sticky="news", pady=40)
+        self.login_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
         #usuario
         self.nombre_label.grid(row=1, column=0)
         self.acceso_usuario.grid(row=1, column=1, pady=10) 

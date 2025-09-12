@@ -13,27 +13,34 @@ class MainApp:
         self.user = user
         self.root.title("Gestor de Inventario")
         self.root.geometry("900x600")
+        self.root.configure(bg="#B6B6B6")
+        self.root.iconphoto(False, tk.PhotoImage(file="src/views/components/Logo (2).png"))
+        print("Página Principal")
 
         # === Encabezado ===
         Header(root, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
-        tk.Label (root, text=f"Bienvenido", font=("Arial", 24)) .pack(pady=20)
+        tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
         # === Buscador y Filtros ===
 
-        search_frame = tk.Frame(root)
-        search_frame.pack(fill="x", padx=20, pady=5)
+        search_frame = tk.Frame(root, bg="#B6B6B6")
+        search_frame.pack(pady=10)
 
-        self.search_entry = tk.Entry(search_frame, width=40)
-        self.search_entry.pack(side="left", padx=5)
-        tk.Button(search_frame, text="Buscar", command = self.buscar).pack(side="left", padx=5)
+        self.search_entry = tk.Entry(search_frame, width=40, bg="#ffffff")
+        self.search_entry.grid(row=0, column=0, padx=5, pady=5)
+        tk.Button(search_frame, text="Buscar", command = self.buscar, bg="#ffffff").grid(row=0, column=1, padx=5)
 
         filtro = ttk.Combobox(search_frame, values=["Categoría", "Precio", "Stock"])
         filtro.set("Filtrar por")
-        filtro.pack(side="left", padx=5)
+        filtro.grid(row=0, column=2, padx=5)
 
-        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC")).pack( side="left", padx=5)
-        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC")).pack(  side="left", padx=5)
+        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC"), bg="#ffffff").grid(row=0, column=3, padx=5)
+        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC"), bg="#ffffff").grid(row=0, column=4, padx=5)
         
+        for i in range(5):
+            search_frame.grid_columnconfigure(i, weight=1)
+
+
         # === Tabla de Productos ===
         # Crear tabla de productos
         self.product_table = ProductTable(self.root, self)

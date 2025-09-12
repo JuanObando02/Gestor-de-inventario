@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import messagebox
+from PIL import Image, ImageTk
 from src.controllers import controlador_usuario
 from src.views.main_view import MainApp   # <-- importa la ventana principal
 
@@ -11,21 +12,29 @@ class LoginApp:
     def __init__(self, log):
         self.log = log
         self.log.title("Login - Gestor de Inventario")
-        self.log.geometry("300x180")
-        print("Pagina de Login Iniciada.")
+        self.log.geometry("300x300")
+        self.log.configure(bg="#B6B6B6")
+        self.log.iconphoto(False, tkinter.PhotoImage(file="src/views/components/Logo (2).png"))
+        print("Login")
 
+        ruta_logo = "src/views/components/Logo.png"
+        imagen = Image.open(ruta_logo)
+        imagen = imagen.resize((100, 100))  # redimensionar
+        self.logo_img = ImageTk.PhotoImage(imagen)
+        tkinter.Label(log, image=self.logo_img, bg="#B6B6B6").pack(pady=10)
+        
         # Usuario
-        tkinter.Label(log, text="Usuario:").pack(pady=5)
+        tkinter.Label(log, text="Usuario:",bg="#B6B6B6").pack(pady=5)
         self.acceso_usuario = tkinter.Entry(log)
         self.acceso_usuario.pack()
 
         # Contraseña
-        tkinter.Label(log, text="Contraseña:").pack(pady=5)
+        tkinter.Label(log, text="Contraseña:", bg="#B6B6B6").pack(pady=5)
         self.password_acceso = tkinter.Entry(log, show="*")
         self.password_acceso.pack()
 
         # Botón
-        tkinter.Button(log, text="Ingresar", command=self.validar).pack(pady=10)
+        tkinter.Button(log, text="Ingresar", command=self.validar, bg="#210ed1", fg="white").pack(pady=10)
 
     def validar(self):
         #solicitamos datos de ingreso.

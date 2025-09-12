@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import messagebox
+from PIL import Image, ImageTk
 from src.controllers import controlador_usuario
 from src.views.main_view import MainApp   # <-- importa la ventana principal
 
@@ -20,44 +21,29 @@ class LoginApp:
 
         self.log = log
         self.log.title("Login - Gestor de Inventario")
-        self.log.geometry(f"{ancho}x{alto}+{x}+{y}")
-        print("Pagina de Login Iniciada.")
-        color="#B6B6B6"
-        colorLetra="#000000"
-         #Color de fondo de la ventana
-        self.log.config(bg=color)
-        #Creando el Frame de login dentro de la ventana Log 
-        frame = tkinter.Frame(bg=color)
-        frame.winfo_geometry()
+        self.log.geometry("300x300")
+        self.log.configure(bg="#B6B6B6")
+        self.log.iconphoto(False, tkinter.PhotoImage(file="src/views/components/Logo (2).png"))
+        print("Login")
 
-        #Creando los wdigets
-        self.login_label = tkinter.Label(frame, text="Iniciar Sesión",bg=color, fg="#210ed1", font=("Arial", 30))
-        #Usuario
-        self.nombre_label = tkinter.Label(frame, text="Usuario:", bg=color, fg=colorLetra, font=("Arial", 16))
-        self.acceso_usuario = tkinter.Entry(frame, font=("Arial", 16))
-        #Contraseña
-        self.contraseña_label = tkinter.Label(frame, text="Contraseña:", bg=color, fg=colorLetra, font=("Arial", 16))
-        self.password_acceso = tkinter.Entry(frame, show="*", font=("Arial", 16))
-        #Boton de login
-        self.login_button = tkinter.Button(frame, text="Ingresar", command=self.validar, bg="#210ed1", fg="white", font=("Arial", 16))
+        ruta_logo = "src/views/components/Logo.png"
+        imagen = Image.open(ruta_logo)
+        imagen = imagen.resize((100, 100))  # redimensionar
+        self.logo_img = ImageTk.PhotoImage(imagen)
+        tkinter.Label(log, image=self.logo_img, bg="#B6B6B6").pack(pady=10)
+        
+        # Usuario
+        tkinter.Label(log, text="Usuario:",bg="#B6B6B6").pack(pady=5)
+        self.acceso_usuario = tkinter.Entry(log)
+        self.acceso_usuario.pack()
 
+        # Contraseña
+        tkinter.Label(log, text="Contraseña:", bg="#B6B6B6").pack(pady=5)
+        self.password_acceso = tkinter.Entry(log, show="*")
+        self.password_acceso.pack()
 
-        #Colocando los widgets en la ventana
-        self.login_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
-        #usuario
-        self.nombre_label.grid(row=1, column=0)
-        self.acceso_usuario.grid(row=1, column=1, pady=10) 
-        #contraseña
-        self.contraseña_label.grid(row=2, column=0)
-        self.password_acceso.grid(row=2, column=1, pady=10)
-        #boton
-        self.login_button.grid(row=3, column=0, columnspan=2, pady=30)
-
-        frame.pack()
-
-
-     
-
+        # Botón
+        tkinter.Button(log, text="Ingresar", command=self.validar, bg="#210ed1", fg="white").pack(pady=10)
 
     def validar(self):
         #solicitamos datos de ingreso.

@@ -1,10 +1,11 @@
+import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto
 
-class ProductTable(ttk.Frame):
+class ProductTable(tk.Frame):
     def __init__(self, parent, main_view):
-        super().__init__(parent)
-        self.main_view = main_view 
+        super().__init__(parent, bg="#B6B6B6")
+        self.main_view = main_view
 
         # === Tabla de Productos ===
         self.tree = ttk.Treeview(

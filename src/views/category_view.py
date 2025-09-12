@@ -5,7 +5,7 @@ from src.controllers import controlador_categoria
 # === Ventana para gestionar categorías ===
 class VentanaCategorias(tk.Toplevel):
     def __init__(self, parent, on_update_callback):
-        super().__init__(parent)
+        super().__init__(parent, bg="#B6B6B6")
         self.title("Gestionar Categorías")
         self.geometry("300x300")
         self.on_update_callback = on_update_callback
@@ -15,9 +15,9 @@ class VentanaCategorias(tk.Toplevel):
 
         self.cargar_categorias()
 
-        tk.Button(self, text="Agregar", command=self.agregar_categoria).pack(pady=5)
-        tk.Button(self, text="Editar", command=self.editar_categoria).pack(pady=5)
-        tk.Button(self, text="Eliminar", command=self.eliminar_categoria).pack(pady=5)
+        tk.Button(self, text="Agregar", bg="#ffffff", command=self.agregar_categoria).pack(pady=5)
+        tk.Button(self, text="Editar", bg="#ffffff", command=self.editar_categoria).pack(pady=5)
+        tk.Button(self, text="Eliminar", bg="#210ed1", command=self.eliminar_categoria).pack(pady=5)
 
     def cargar_categorias(self):
         self.lista.delete(0, tk.END)

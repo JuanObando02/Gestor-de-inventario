@@ -9,6 +9,7 @@ class VentanaMovimientos(tk.Toplevel):
         self.geometry("400x350")
         self.user = user
         self.on_complete_callback = on_complete_callback # Guarda la referencia a la función
+        
 
         # Producto
         tk.Label(self, text="Producto:").pack(pady=5)

@@ -14,7 +14,7 @@ class MainApp:
         self.root.title("Gestor de Inventario")
         self.root.geometry("900x600")
         self.root.configure(bg="#B6B6B6")
-        self.root.iconphoto(False, tk.PhotoImage(file="src/views/components/Logo (2).png"))
+        self.root.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
         print("Página Principal")
 
         # === Encabezado ===

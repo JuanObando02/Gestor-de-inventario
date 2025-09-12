@@ -75,9 +75,9 @@ class ProductTable(tk.Frame):
                 # Verificar permisos
                 if self.main_view.user.role != "admin":
                     messagebox.showerror("Permiso denegado", "Solo los administradores pueden eliminar productos.")
-                    print("self.main_view.user:", self.main_view.user)
+                    print("Rol: ", self.main_view.user)
                     return
-                print("self.main_view.user:", self.main_view.user)
+                print("Rol: ", self.main_view.user)
 
                 try:
                 # Aquí necesitamos el id_producto para borrar

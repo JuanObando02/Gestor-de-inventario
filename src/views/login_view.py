@@ -21,16 +21,14 @@ class LoginApp:
 
         self.log = log
         self.log.title("Login - Gestor de Inventario")
-        self.log.geometry("300x300")
+        self.centrar_ventana(300, 300)
         self.log.configure(bg="#B6B6B6")
-        self.log.iconphoto(False, tkinter.PhotoImage(file="src/views/components/Logo (2).png"))
-        print("Login")
+        self.log.iconphoto(False, tkinter.PhotoImage(file="assets/images/Logo_icon.png"))
 
-        ruta_logo = "src/views/components/Logo.png"
-        imagen = Image.open(ruta_logo)
-        imagen = imagen.resize((100, 100))  # redimensionar
+        # cargar logo con pil
+        imagen = Image.open("assets/images/Logo_con_nombre_100x126.png")
         self.logo_img = ImageTk.PhotoImage(imagen)
-        tkinter.Label(log, image=self.logo_img, bg="#B6B6B6").pack(pady=10)
+        tkinter.Label(log, image = self.logo_img, bg="#B6B6B6").pack(pady=10)
         
         # Usuario
         tkinter.Label(log, text="Usuario:",bg="#B6B6B6").pack(pady=5)
@@ -39,11 +37,40 @@ class LoginApp:
 
         # Contraseña
         tkinter.Label(log, text="Contraseña:", bg="#B6B6B6").pack(pady=5)
-        self.password_acceso = tkinter.Entry(log, show="*")
-        self.password_acceso.pack()
+
+        # Crear un Frame para contener el Entry y el Button uno al lado del otro
+        frame_password = tkinter.Frame(log, bg="#B6B6B6")
+        frame_password.pack()
+
+        self.password_acceso = tkinter.Entry(frame_password, show="*", width=15)
+        self.password_acceso.pack(side="left")
+
+        self.mostrar_password = False
+        self.btn_mostrar = tkinter.Button(frame_password, text="Ver", command = self.mostrar, bg="#9C9B9B", relief="raised")
+        self.btn_mostrar.pack(side="left", padx=2)
 
         # Botón
-        tkinter.Button(log, text="Ingresar", command=self.validar, bg="#210ed1", fg="white").pack(pady=10)
+        tkinter.Button(log, text="Ingresar", command = self.validar, bg="#357BB7", fg="white").pack(pady=10)
+        
+        # Permitir login con Enter
+        self.log.bind("<Return>", lambda event: self.validar())
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.log.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.log.winfo_screenheight() // 2) - (alto // 2)
+        self.log.geometry(f"{ancho}x{alto}+{x}+{y}")
+
+    def mostrar(self):
+        """Mostrar/ocultar contraseña"""
+        if self.mostrar_password:
+            self.password_acceso.config (show="*")
+            self.btn_mostrar.config (text="Ver")
+        else:
+            self.password_acceso.config (show="")
+            self.btn_mostrar.config (text="Ver")
+
+        self.mostrar_password = not self.mostrar_password
 
     def validar(self):
         #solicitamos datos de ingreso.
@@ -55,20 +82,21 @@ class LoginApp:
 
         #Si se retorno un usuario:
         if user:
-            messagebox.showinfo("Éxito", f"Bienvenido {user.username} ({user.role})")
+            messagebox.showinfo("Éxito", f"Bienvenido al Gestor de Inventarios Mini Stock ,{user.username}")
             self.log.destroy()  # cerrar login
             print("Claves de acceso correctas, Login Cerrado.")
 
             # Crear la nueva ventana principal
-            new_root = tkinter.Tk()
-            MainApp(new_root, user)
-            new_root.mainloop()
+            ventana_menu = tkinter.Tk()
+            MainApp(ventana_menu, user)
+            ventana_menu.mainloop()
+            
         else:
             messagebox.showerror("Error", "Usuario o contraseña incorrectos")
             print("Claves de acceso Incorrectar. Intente nuevamente.")
 
-
+        
 if __name__ == "__main__":
-    ventana = tkinter.Tk()
-    app = LoginApp(ventana)
-    ventana.mainloop()
+    ventana_login = tkinter.Tk()
+    app = LoginApp(ventana_login)
+    ventana_login.mainloop()

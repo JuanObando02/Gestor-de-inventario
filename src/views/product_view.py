@@ -10,7 +10,7 @@ class VentanaProducto(tk.Toplevel):
         self.geometry("400x500")
         self.on_complete_callback = on_complete_callback
         self.user = user
-        self.producto = producto  # No se usa en esta versión, pero podría ser útil para editar
+        self.producto = producto 
 
         fuente = ("Arial", 12)
         # === Código ===

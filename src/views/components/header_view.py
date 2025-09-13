@@ -11,9 +11,7 @@ class Header(tk.Frame):
         # la ventana se expande horizontalmente y se mantiene en la parte superior con fill="x"
 
         # --- Logo ---
-        ruta_logo = os.path.join(os.path.dirname(__file__), "Logo (1).png")
-        imagen = Image.open(ruta_logo)
-        imagen = imagen.resize((80, 100))
+        imagen = Image.open("assets/images/Logo_blanco_80x100.png")
         self.logo_img = ImageTk.PhotoImage(imagen)
 
         tk.Label(self, image=self.logo_img, bg="#357bb7").pack(side="left", padx=10, pady=10)
@@ -26,5 +24,5 @@ class Header(tk.Frame):
         tk.Button(ventana_botones, text="Nuevo Producto", command = crear_producto, bg="#ffffff").pack(side="left", padx=5)
         tk.Button(ventana_botones, text="Registro", command = bt_registrar, bg="#ffffff")            .pack(side="left", padx=5)
         tk.Button(ventana_botones, text="Exportar", command = bt_exportar,  bg="#ffffff")            .pack(side="left", padx=5)
-        tk.Button(ventana_botones, text="Salir",    command = bt_salir,     bg="#210ed1", fg="white").pack(side="left", padx=5)
+        tk.Button(ventana_botones, text="Salir",    command = bt_salir,     bg="#357BB7", fg="white").pack(side="left", padx=5)
         

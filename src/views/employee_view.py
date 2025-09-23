@@ -7,6 +7,7 @@ class VentanaEmpleado(tk.Toplevel):
         super().__init__(parent)
         self.title("Crear Nuevo Empleado")
         self.geometry("350x250")
+        self.centrar_ventana(350, 250)
         self.config(bg="white")
 
         # === Usuario ===
@@ -29,6 +30,12 @@ class VentanaEmpleado(tk.Toplevel):
         # Botón crear
         tk.Button(self, text="Crear", command=self.crear_usuario).pack(pady=20)
         self.bind("<Return>", lambda event: self.crear_usuario())
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def crear_usuario(self):
         usuario = self.entry_usuario.get()

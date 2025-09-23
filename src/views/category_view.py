@@ -9,6 +9,7 @@ class VentanaCategorias(tk.Toplevel):
         self.title("Gestionar Categorías")
         self.geometry("300x300")
         self.on_update_callback = on_update_callback
+        self.centrar_ventana(300, 300)
 
         self.lista = tk.Listbox(self)
         self.lista.pack(fill="both", expand=True, padx=10, pady=10)
@@ -18,6 +19,12 @@ class VentanaCategorias(tk.Toplevel):
         tk.Button(self, text="Agregar", bg="#ffffff", command=self.agregar_categoria).pack(pady=5)
         tk.Button(self, text="Editar", bg="#ffffff", command=self.editar_categoria).pack(pady=5)
         tk.Button(self, text="Eliminar", bg="#210ed1", command=self.eliminar_categoria).pack(pady=5)
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def cargar_categorias(self):
         self.lista.delete(0, tk.END)

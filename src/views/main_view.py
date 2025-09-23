@@ -14,29 +14,16 @@ class MainApp:
         self.user = user
         self.root.title("Gestor de Inventario")
         self.root.geometry("900x600")
+        self.centrar_ventana(900, 600)
         self.root.configure(bg="#B6B6B6")
         self.root.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
         print("Página Principal")
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(
-                root,
-                self.crear_empleado,
-                self.registro_producto,
-                self.abrir_movimiento,
-                self.exportar,
-                self.salir
-            )
+            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
         else:
-            Header(
-                root,
-                None,
-                self.registro_producto,
-                self.abrir_movimiento,
-                self.exportar,
-                self.salir
-            )
+            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
@@ -66,6 +53,12 @@ class MainApp:
         self.product_table.pack(fill = "both", expand=True)
         # Cargar productos
         self.cargar_productos_en_tabla()
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.root.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.root.winfo_screenheight() // 2) - (alto // 2)
+        self.root.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def crear_empleado(self):
         VentanaEmpleado(self.root)

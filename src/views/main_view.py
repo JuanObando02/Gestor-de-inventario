@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto
 from src.views.components.header_view import Header
 from src.views.components.product_table import ProductTable
+from src.views.employee_view import VentanaEmpleado
 from src.views.movement_view import VentanaMovimientos
 from src.views.product_view import VentanaProducto
 
@@ -18,7 +19,25 @@ class MainApp:
         print("Página Principal")
 
         # === Encabezado ===
-        Header(root, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
+        if self.user.role == "admin":
+            Header(
+                root,
+                self.crear_empleado,
+                self.registro_producto,
+                self.abrir_movimiento,
+                self.exportar,
+                self.salir
+            )
+        else:
+            Header(
+                root,
+                None,
+                self.registro_producto,
+                self.abrir_movimiento,
+                self.exportar,
+                self.salir
+            )
+
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
         # === Buscador y Filtros ===
@@ -47,6 +66,9 @@ class MainApp:
         self.product_table.pack(fill = "both", expand=True)
         # Cargar productos
         self.cargar_productos_en_tabla()
+
+    def crear_empleado(self):
+        VentanaEmpleado(self.root)
 
     def registro_producto(self):
         VentanaProducto(self.root, self.user, self.cargar_productos_en_tabla)

@@ -14,8 +14,6 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 #se usa sha256 para hashear la contraseña y encode para convertirla a bytes.
 #con hexdigest se obtiene la representacion en hexadecimal del hash.
-# se usa sha256 para hashear la contraseña y encode para convertirla a bytes.
-# con hexdigest se obtiene la representacion en hexadecimal del hash.
 
 def insert_user(username, password, role):
     conn = get_connection()

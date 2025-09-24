@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 class Header(tk.Frame):
 
 
-    def __init__(self, ventana, crear_producto, bt_registrar, bt_exportar, bt_salir):
+    def __init__(self, ventana, bt_empleado, crear_producto, bt_registrar, bt_exportar, bt_salir):
         super().__init__(ventana, bg="#357bb7", height=80)
         self.pack(fill="x")
         # la ventana se expande horizontalmente y se mantiene en la parte superior con fill="x"
@@ -21,6 +21,9 @@ class Header(tk.Frame):
         ventana_botones.pack(side="right", padx=10)
         # ventada secundaria con los botones alineados a la derecha 
 
+        if bt_empleado:
+            tk.Button(ventana_botones, text="Nuevo Empleado", command = bt_empleado,  bg="#ffffff").pack(side="left", padx=5)
+            
         tk.Button(ventana_botones, text="Nuevo Producto", command = crear_producto, bg="#ffffff").pack(side="left", padx=5)
         tk.Button(ventana_botones, text="Registro", command = bt_registrar, bg="#ffffff")            .pack(side="left", padx=5)
         tk.Button(ventana_botones, text="Exportar", command = bt_exportar,  bg="#ffffff")            .pack(side="left", padx=5)

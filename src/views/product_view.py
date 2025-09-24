@@ -11,6 +11,7 @@ class VentanaProducto(tk.Toplevel):
         self.on_complete_callback = on_complete_callback
         self.user = user
         self.producto = producto 
+        self.centrar_ventana(400, 500)
 
         fuente = ("Arial", 12)
         # === Código ===
@@ -62,6 +63,12 @@ class VentanaProducto(tk.Toplevel):
 
         if self.producto:
             self.precargar_datos()
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def precargar_datos(self):
         self.codigo_entry.insert(0, self.producto["codigo"])

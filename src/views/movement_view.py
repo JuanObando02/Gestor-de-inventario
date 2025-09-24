@@ -9,6 +9,7 @@ class VentanaMovimientos(tk.Toplevel):
         self.geometry("400x350")
         self.user = user
         self.on_complete_callback = on_complete_callback # Guarda la referencia a la función
+        self.centrar_ventana(400, 350)
         
 
         # Producto
@@ -39,7 +40,13 @@ class VentanaMovimientos(tk.Toplevel):
 
         # Botón registrar
         tk.Button(self, text="Registrar", command=self.registrar).pack(pady=20)
-
+    
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
+    
     def registrar(self):
         try:
             producto_index = self.producto_cb.current()

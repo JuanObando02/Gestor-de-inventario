@@ -1,11 +1,14 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+import csv
+from tkinter import ttk, messagebox, filedialog
 from src.controllers import controlador_producto
 from src.views.components.header_view import Header
 from src.views.components.product_table import ProductTable
 from src.views.employee_view import VentanaEmpleado
 from src.views.movement_view import VentanaMovimientos
 from src.views.product_view import VentanaProducto
+from src.views.view_csv import VentanaCargaCSV
+
 
 
 class MainApp:
@@ -26,9 +29,9 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
+            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir, self.importar_csv)
         else:
-            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
+            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir, self.importar_csv)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
@@ -136,7 +139,10 @@ class MainApp:
         productos.sort(key=lambda x: x["stock"], reverse=(orden == "DESC"))
         self.cargar_productos_en_tabla(productos)
 
-
+    def importar_csv(self):
+        """Abrir ventana para importar CSV"""
+        VentanaCargaCSV(self.root)
+    
     def exportar(self):
         messagebox.showinfo("Exportar", "Exportando...")
 

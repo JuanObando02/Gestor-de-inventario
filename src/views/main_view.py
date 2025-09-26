@@ -19,6 +19,11 @@ class MainApp:
         self.root.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
         print("Página Principal")
 
+        # estado inicial de orden
+        self.orden_actual = "ASC"
+        # atributo para guardar el último filtro aplicado
+        self.productos_filtrados = None
+
         # === Encabezado ===
         if self.user.role == "admin":
             Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
@@ -34,14 +39,17 @@ class MainApp:
 
         self.search_entry = tk.Entry(search_frame, width=40, bg="#ffffff")
         self.search_entry.grid(row=0, column=0, padx=5, pady=5)
+        # Detectar cuando se presiona Enter
+        self.search_entry.bind("<Return>", lambda event: self.buscar())
+
         tk.Button(search_frame, text="Buscar", command = self.buscar, bg="#ffffff").grid(row=0, column=1, padx=5)
 
-        filtro = ttk.Combobox(search_frame, values=["Categoría", "Precio", "Stock"])
-        filtro.set("Filtrar por")
-        filtro.grid(row=0, column=2, padx=5)
+        self.filtro = ttk.Combobox(search_frame, values=["Filtrar por","Categoría", "Nombre", "Codigo"])
+        self.filtro.set("Filtrar por")
+        self.filtro.grid(row=0, column=2, padx=5)
 
-        tk.Button(search_frame, text="Mayor Stock", command=lambda: self.ordenar("DESC"), bg="#ffffff").grid(row=0, column=3, padx=5)
-        tk.Button(search_frame, text="Menor Stock", command=lambda: self.ordenar("ASC"), bg="#ffffff").grid(row=0, column=4, padx=5)
+        self.btn_ordenar = tk.Button(search_frame, text="Mayor Stock", command=self.toggle_orden, bg="#ffffff")
+        self.btn_ordenar.grid(row=0, column=3, padx=5)
         
         for i in range(5):
             search_frame.grid_columnconfigure(i, weight=1)
@@ -53,6 +61,17 @@ class MainApp:
         self.product_table.pack(fill = "both", expand=True)
         # Cargar productos
         self.cargar_productos_en_tabla()
+
+    def toggle_orden(self):
+        """Alterna entre ASC y DESC al ordenar."""
+        if self.orden_actual == "ASC":
+            self.ordenar("DESC")
+            self.orden_actual = "DESC"
+            self.btn_ordenar.config(text="Menor Stock")
+        else:
+            self.ordenar("ASC")
+            self.orden_actual = "ASC"
+            self.btn_ordenar.config(text="Mayor Stock")
 
     def centrar_ventana(self, ancho=300, alto=400):
         """Centrar ventana en la pantalla"""
@@ -85,28 +104,38 @@ class MainApp:
                 "", "end",
                 values=(p["codigo"], p["nombre"], p["nombre_categoria"], p["descripcion"], p["precio"], p["stock"], "Editar | Eliminar")
             )
+        # actualizar la lista actual en memoria
+        self.productos_filtrados = productos
 
     def buscar(self):
         """Filtra productos por lo que escriba el usuario en el search_entry."""
         texto = self.search_entry.get().lower()
+        filtro = self.filtro.get()
 
         productos = controlador_producto.get_all_products()
-        filtrados = [
-            p for p in productos
-            if texto in p["codigo"].lower()
-            or texto in p["nombre"].lower()
-            or texto in p["nombre_categoria"].lower()
-        ]
+
+        if filtro == "Categoría":
+                filtrados = [p for p in productos if texto in p["nombre_categoria"].lower()]
+        elif filtro == "Nombre":
+                filtrados = [p for p in productos if texto in str(p["nombre"]).lower()]
+        elif filtro == "Codigo":
+                filtrados = [p for p in productos if texto in str(p["codigo"]).lower()]
+        else:  # búsqueda general si no hay filtro seleccionado
+            filtrados = [
+                p for p in productos
+                if texto in p["codigo"].lower()
+                or texto in p["nombre"].lower()
+                or texto in p["nombre_categoria"].lower()
+            ]
 
         self.cargar_productos_en_tabla(filtrados)
 
     def ordenar(self, orden="ASC"):
-        """Ordena los productos por stock."""
-        productos = controlador_producto.get_all_products()
+        """Ordena los productos por stock respetando el último filtro aplicado."""
+        productos = self.productos_filtrados or controlador_producto.get_all_products()
         productos.sort(key=lambda x: x["stock"], reverse=(orden == "DESC"))
         self.cargar_productos_en_tabla(productos)
 
-        messagebox.showinfo("Ordenar", f"Ordenando por stock {orden}")
 
     def exportar(self):
         messagebox.showinfo("Exportar", "Exportando...")

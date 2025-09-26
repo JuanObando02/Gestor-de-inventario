@@ -7,50 +7,60 @@ class VentanaMovimientos(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback):
         super().__init__(parent)
         self.title("Registrar Movimiento de Inventario")
-        self.geometry("400x350")
+        self.geometry("450x350")
+        self.centrar_ventana(450, 350)
         self.user = user
         self.on_complete_callback = on_complete_callback
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
 
         # Canvas que se expande
-        self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
+        self.canvas = tk.Canvas(self, highlightthickness = 0, bg="#B6B6B6")
         self.canvas.pack(fill="both", expand=True)
 
         # Fondo con logo
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
-            logo = logo.resize((200, 200), Image.LANCZOS)
-            self.logo_tk = ImageTk.PhotoImage(logo)
-            self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
+            
+            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
+            self.logo_item = self.canvas.create_image(0, 0, image = self.logo_tk, anchor="center")
+
         except Exception as e:
+
             print(f"No se pudo cargar el logo: {e}")
             self.logo_item = None
 
         # Widgets
+
         self.text_producto = self.canvas.create_text(0, 0, text="Producto:", fill="black", font=("Arial", 12, "bold"))
         self.productos = controlador_producto.get_all_products()
         self.producto_cb = ttk.Combobox(
             self,
-            values=[f"{p['codigo']} - {p['nombre']}" for p in self.productos],
-            state="readonly",
-            width=25
+            values = [f"{p['codigo']} - {p['nombre']}" for p in self.productos],
+            state = "readonly",
+            width = 25
         )
-        self.combo_producto_item = self.canvas.create_window(0, 0, window=self.producto_cb)
+        self.combo_producto_item = self.canvas.create_window(0, 0, window = self.producto_cb)
 
-        self.text_tipo = self.canvas.create_text(0, 0, text="Tipo de movimiento:", fill="black", font=("Arial", 12, "bold"))
+        self.text_tipo = self.canvas.create_text(0, 0, text="Tipo de movimiento:", fill="Black", font=("Arial", 12, "bold"))
         self.tipo_cb = ttk.Combobox(self, values=["entrada", "salida"], state="readonly", width=20)
         self.combo_tipo_item = self.canvas.create_window(0, 0, window=self.tipo_cb)
 
         self.text_cantidad = self.canvas.create_text(0, 0, text="Cantidad:", fill="black", font=("Arial", 12, "bold"))
-        self.cantidad_entry = tk.Entry(self, width=10, justify="center", font=("Arial", 14), bg="#FFFFFF")
-        self.entry_cantidad_item = self.canvas.create_window(0, 0, window=self.cantidad_entry)
+        self.cantidad_entry = tk.Entry(self, width=10, justify="center", font=("Arial", 12), bg="#FFFFFF")
+        self.entry_cantidad_item = self.canvas.create_window(0, 0, window = self.cantidad_entry)
 
-        self.registrar_btn = tk.Button(self, text="Registrar", command=self.registrar, bg="#4CAF50", fg="white", font=("Arial", 12, "bold"))
+        self.registrar_btn = tk.Button (self, text="Registrar", command=self.registrar, bg="#12A617", fg="white", font=("Arial", 12, "bold"))
+
         self.boton_item = self.canvas.create_window(0, 0, window=self.registrar_btn)
 
         # Recolocar elementos al redimensionar
         self.bind("<Configure>", self.reubicar_elementos)
-
+    
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
+    
     def reubicar_elementos(self, event=None):
         """Mantener todo centrado al cambiar tamaño de ventana"""
         w = self.winfo_width()
@@ -112,3 +122,4 @@ class VentanaMovimientos(tk.Toplevel):
             messagebox.showerror("Error", str(e))
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo registrar: {e}")
+

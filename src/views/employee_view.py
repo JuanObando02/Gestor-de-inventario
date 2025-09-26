@@ -7,8 +7,8 @@ class VentanaEmpleado(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Crear Nuevo Empleado")
-        self.geometry("350x250")
-        self.centrar_ventana(350, 250)
+        self.geometry("350x285")
+        self.centrar_ventana(350, 285)
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
 
         # Canvas principal
@@ -17,11 +17,12 @@ class VentanaEmpleado(tk.Toplevel):
 
         # Fondo con logo
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
-            logo = logo.resize((200, 200), Image.LANCZOS)
-            self.logo_tk = ImageTk.PhotoImage(logo)
+
+            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
+
         except Exception as e:
+
             print(f"No se pudo cargar el logo: {e}")
             self.logo_item = None
 
@@ -43,8 +44,7 @@ class VentanaEmpleado(tk.Toplevel):
         self.rol_item = self.canvas.create_window(0, 0, window=self.rol)
 
         # Botón crear
-        self.btn_crear = tk.Button(self, text="Crear", command=self.crear_usuario,
-                                   bg="#4CAF50", fg="white", font=("Arial", 12, "bold"))
+        self.btn_crear = tk.Button(self, text="Crear" , command=self.crear_usuario, bg="#12A617", fg="white", font=("Arial", 12, "bold"))
         self.btn_item = self.canvas.create_window(0, 0, window=self.btn_crear)
 
         # Reubicar al cambiar tamaño de ventana

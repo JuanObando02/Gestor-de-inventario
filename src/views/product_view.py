@@ -8,7 +8,8 @@ class VentanaProducto(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback, producto=None):
         super().__init__(parent)
         self.title("Registrar Producto")
-        self.geometry("400x530")
+        self.geometry("450x530")
+        self.centrar_ventana(450, 530)
         self.on_complete_callback = on_complete_callback
         self.user = user
         self.producto = producto
@@ -20,10 +21,10 @@ class VentanaProducto(tk.Toplevel):
 
         # Fondo con logo
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
-            logo = logo.resize((200, 200), Image.LANCZOS)
-            self.logo_tk = ImageTk.PhotoImage(logo)
+
+            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
+
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")
             self.logo_item = None
@@ -31,17 +32,17 @@ class VentanaProducto(tk.Toplevel):
         fuente = ("Arial", 12,"bold")
 
         # === Código ===
-        self.text_codigo = self.canvas.create_text(0, 0, text="Código:", fill="black", font=fuente, anchor="w")
+        self.text_codigo = self.canvas.create_text(0, 0, text="Código:", fill="black", font = fuente, anchor="w")
         self.codigo_entry = tk.Entry(self, font=fuente)
         self.entry_codigo_item = self.canvas.create_window(0, 0, window=self.codigo_entry)
 
         # === Nombre ===
-        self.text_nombre = self.canvas.create_text(0, 0, text="Nombre:", fill="black", font=fuente, anchor="w")
+        self.text_nombre = self.canvas.create_text(0, 0, text="Nombre:", fill="black", font = fuente, anchor="w")
         self.nombre_entry = tk.Entry(self, font=fuente)
         self.entry_nombre_item = self.canvas.create_window(0, 0, window=self.nombre_entry)
 
         # === Precio ===
-        self.text_precio = self.canvas.create_text(0, 0, text="Precio:", fill="black", font=fuente, anchor="w")
+        self.text_precio = self.canvas.create_text(0, 0, text="Precio:", fill="black", font = fuente, anchor="w")
         self.precio_entry = tk.Entry(self, font=fuente)
         self.entry_precio_item = self.canvas.create_window(0, 0, window=self.precio_entry)
 
@@ -57,21 +58,20 @@ class VentanaProducto(tk.Toplevel):
 
         # === Categoría ===
         self.text_categoria = self.canvas.create_text(0, 0, text="Categoría:", fill="black", font=fuente, anchor="w")
-
         self.categorias = controlador_categoria.get_all_categorias()
         self.categoria_cb = ttk.Combobox(
             self,
             values=[c[1] for c in self.categorias],
             state="readonly"
         )
-        self.combo_categoria_item = self.canvas.create_window(0, 0, window=self.categoria_cb)
-
-        self.btn_categoria = tk.Button(self, text="⚙️", command=self.abrir_gestion_categorias)
-        self.boton_categoria_item = self.canvas.create_window(0, 0, window=self.btn_categoria)
+        
+        self.combo_categoria_item = self.canvas.create_window(0, 0, window = self.categoria_cb)
+        self.btn_categoria = tk.Button(self, text = "⚙️", command = self.abrir_gestion_categorias)
+        self.boton_categoria_item = self.canvas.create_window(0, 0, window = self.btn_categoria)
 
         # === Botón Guardar ===
-        self.guardar_btn = tk.Button(self, text="Guardar", command=self.guardar_producto, bg="#4CAF50", fg="white", font=("Arial", 12, "bold"))
-        self.boton_guardar_item = self.canvas.create_window(0, 0, window=self.guardar_btn)
+        self.guardar_btn = tk.Button(self, text="Guardar", command = self.guardar_producto, bg="#12A617", fg="white", font=("Arial", 12, "bold"))
+        self.boton_guardar_item = self.canvas.create_window(0, 0, window = self.guardar_btn)
 
         if self.producto:
             self.precargar_datos()
@@ -89,7 +89,7 @@ class VentanaProducto(tk.Toplevel):
         if self.logo_item:
             self.canvas.coords(self.logo_item, cx, cy)
 
-        offset = -160  # desplazamiento vertical inicial
+        offset = -200  # desplazamiento vertical inicial
         step = 40      # espacio entre filas
 
         # Código
@@ -119,6 +119,12 @@ class VentanaProducto(tk.Toplevel):
 
         # Botón Guardar
         self.canvas.coords(self.boton_guardar_item, cx, cy + offset + step * 10)
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def precargar_datos(self):
         self.codigo_entry.insert(0, self.producto["codigo"])

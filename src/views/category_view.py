@@ -19,10 +19,10 @@ class VentanaCategorias(tk.Toplevel):
 
         # === Fondo con logo ===
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
-            logo = logo.resize((200, 200), Image.LANCZOS)
-            self.logo_tk = ImageTk.PhotoImage(logo)
+
+            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
+
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")
             self.logo_item = None
@@ -30,16 +30,16 @@ class VentanaCategorias(tk.Toplevel):
         # === Widgets sobre el canvas ===
         self.text_lista = self.canvas.create_text(0, 0, text="Categorías:", fill="black", font=("Arial", 12, "bold"))
         self.lista = tk.Listbox(self, width=30, height=10)
-        self.lista_item = self.canvas.create_window(0, 0, window=self.lista)
+        self.lista_item = self.canvas.create_window(0, 0, window = self.lista)
 
-        self.btn_agregar = tk.Button(self, text="Agregar", bg="#4CAF50", fg="white", command=self.agregar_categoria)
-        self.btn_agregar_item = self.canvas.create_window(0, 0, window=self.btn_agregar)
+        self.btn_agregar = tk.Button(self, text="Agregar", bg = "#12A617", fg="white", command = self.agregar_categoria)
+        self.btn_agregar_item = self.canvas.create_window(0, 0, window = self.btn_agregar)
 
-        self.btn_editar = tk.Button(self, text="Editar", bg="#FFA500", fg="black", command=self.editar_categoria)
-        self.btn_editar_item = self.canvas.create_window(0, 0, window=self.btn_editar)
+        self.btn_editar = tk.Button(self, text="Editar", bg = "#D58B01", fg="black", command = self.editar_categoria)
+        self.btn_editar_item = self.canvas.create_window(0, 0, window = self.btn_editar)
 
-        self.btn_eliminar = tk.Button(self, text="Eliminar", bg="#D32F2F", fg="white", command=self.eliminar_categoria)
-        self.btn_eliminar_item = self.canvas.create_window(0, 0, window=self.btn_eliminar)
+        self.btn_eliminar = tk.Button(self, text="Eliminar", bg= "#B02020", fg="white", command = self.eliminar_categoria)
+        self.btn_eliminar_item = self.canvas.create_window(0, 0, window = self.btn_eliminar)
 
         # Cargar categorías
         self.cargar_categorias()
@@ -73,13 +73,16 @@ class VentanaCategorias(tk.Toplevel):
         self.canvas.coords(self.btn_eliminar_item, cx + 80, cy + 90)
 
     def cargar_categorias(self):
+        """Cargar categorías desde la base de datos"""
         self.lista.delete(0, tk.END)
+
         categorias = controlador_categoria.get_all_categorias()
         for c in categorias:
             self.lista.insert(tk.END, f"{c[0]} - {c[1]}")
 
     def agregar_categoria(self):
         nombre = simpledialog.askstring("Nueva categoría", "Ingrese el nombre:")
+
         if nombre:
             controlador_categoria.add_categoria(nombre)
             self.cargar_categorias()
@@ -87,12 +90,15 @@ class VentanaCategorias(tk.Toplevel):
 
     def editar_categoria(self):
         sel = self.lista.curselection()
+
         if not sel:
             messagebox.showwarning("Atención", "Seleccione una categoría.")
             return
+        
         cat_text = self.lista.get(sel[0])
         cat_id = int(cat_text.split(" - ")[0])
         nuevo_nombre = simpledialog.askstring("Editar categoría", "Nuevo nombre:")
+
         if nuevo_nombre:
             controlador_categoria.update_categoria(cat_id, nuevo_nombre)
             self.cargar_categorias()

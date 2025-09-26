@@ -20,7 +20,7 @@ cursor = conn.cursor()
 #Se crea la tabla categorias
 cursor.execute (
     """ CREATE TABLE IF NOT EXISTS Categorias (
-            id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_categoria INTEGER PRIMARY KEY,
             nombre VARCHAR(20) NOT NULL,
             pasillo INTEGER
         );

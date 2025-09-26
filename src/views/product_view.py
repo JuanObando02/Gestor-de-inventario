@@ -8,88 +8,117 @@ class VentanaProducto(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback, producto=None):
         super().__init__(parent)
         self.title("Registrar Producto")
-        self.geometry("400x500")
+        self.geometry("400x530")
         self.on_complete_callback = on_complete_callback
         self.user = user
-        self.producto = producto 
-        self.centrar_ventana(400, 500)
+        self.producto = producto
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
-        self.config(bg="#B6B6B6")
-         # Fondo con imagen/logo
-        # =====================
+
+        # Canvas que se expande
+        self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
+        self.canvas.pack(fill="both", expand=True)
+
+        # Fondo con logo
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")  # logo con transparencia
-            logo = logo.resize((200, 200), Image.LANCZOS)  # Ajustar tamaño
-            # Crear un nuevo canal alfa con menos opacidad
-            
+            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
+            logo = logo.resize((200, 200), Image.LANCZOS)
             self.logo_tk = ImageTk.PhotoImage(logo)
-            
-            # Colocar en la ventana
-            self.bg_label = tk.Label(self, image=self.logo_tk, bg="#B6B6B6")
-            self.bg_label.place(relx=0.5, rely=0.5, anchor="center")
+            self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")
+            self.logo_item = None
 
-        # Frame para los widgets encima del fondo
-        frame = tk.Frame(self, bg="#B6B6B6")
-        frame.place(relx=0.5, rely=0.5, anchor="center")
+        fuente = ("Arial", 12,"bold")
 
-        fuente = ("Arial", 12)
         # === Código ===
-        tk.Label(self, text="Código:").pack(pady=5)
+        self.text_codigo = self.canvas.create_text(0, 0, text="Código:", fill="black", font=fuente, anchor="w")
         self.codigo_entry = tk.Entry(self, font=fuente)
-        self.codigo_entry.pack()
+        self.entry_codigo_item = self.canvas.create_window(0, 0, window=self.codigo_entry)
 
         # === Nombre ===
-        tk.Label(self, text="Nombre:").pack(pady=5)
+        self.text_nombre = self.canvas.create_text(0, 0, text="Nombre:", fill="black", font=fuente, anchor="w")
         self.nombre_entry = tk.Entry(self, font=fuente)
-        self.nombre_entry.pack()
+        self.entry_nombre_item = self.canvas.create_window(0, 0, window=self.nombre_entry)
 
         # === Precio ===
-        tk.Label(self, text="Precio:").pack(pady=5)
+        self.text_precio = self.canvas.create_text(0, 0, text="Precio:", fill="black", font=fuente, anchor="w")
         self.precio_entry = tk.Entry(self, font=fuente)
-        self.precio_entry.pack()
+        self.entry_precio_item = self.canvas.create_window(0, 0, window=self.precio_entry)
 
         # === Cantidad inicial ===
-        tk.Label(self, text="Cantidad inicial:").pack(pady=5)
+        self.text_cantidad = self.canvas.create_text(0, 0, text="Cantidad inicial:", fill="black", font=fuente, anchor="w")
         self.cantidad_entry = tk.Entry(self, font=fuente)
-        self.cantidad_entry.pack()
+        self.entry_cantidad_item = self.canvas.create_window(0, 0, window=self.cantidad_entry)
 
-        # === Descripcion ===
-        tk.Label(self, text="Descripcion:").pack(pady=5)
+        # === Descripción ===
+        self.text_descripcion = self.canvas.create_text(0, 0, text="Descripción:", fill="black", font=fuente, anchor="w")
         self.descripcion_entry = tk.Text(self, font=fuente, width=40, height=4)
-        self.descripcion_entry.pack()
+        self.entry_descripcion_item = self.canvas.create_window(0, 0, window=self.descripcion_entry)
 
-       # === Categoría ===
-        tk.Label(self, text="Categoría:").pack(pady=5)
-
-        frame_cat = tk.Frame(self)
-        frame_cat.pack(pady=5)
+        # === Categoría ===
+        self.text_categoria = self.canvas.create_text(0, 0, text="Categoría:", fill="black", font=fuente, anchor="w")
 
         self.categorias = controlador_categoria.get_all_categorias()
-
-        # Combobox con nombres de categorías
         self.categoria_cb = ttk.Combobox(
-            frame_cat,
-            values=[c[1] for c in self.categorias],  # solo nombres
+            self,
+            values=[c[1] for c in self.categorias],
             state="readonly"
         )
-        self.categoria_cb.pack(side="left", padx=5)
+        self.combo_categoria_item = self.canvas.create_window(0, 0, window=self.categoria_cb)
 
-        # Botón para abrir ventana de categorías
-        tk.Button(frame_cat, text="⚙️", command = self.abrir_gestion_categorias).pack(side="left")
+        self.btn_categoria = tk.Button(self, text="⚙️", command=self.abrir_gestion_categorias)
+        self.boton_categoria_item = self.canvas.create_window(0, 0, window=self.btn_categoria)
 
         # === Botón Guardar ===
-        tk.Button(self, text="Guardar", command=self.guardar_producto).pack(pady=20)
+        self.guardar_btn = tk.Button(self, text="Guardar", command=self.guardar_producto, bg="#4CAF50", fg="white", font=("Arial", 12, "bold"))
+        self.boton_guardar_item = self.canvas.create_window(0, 0, window=self.guardar_btn)
 
         if self.producto:
             self.precargar_datos()
 
-    def centrar_ventana(self, ancho=300, alto=400):
-        """Centrar ventana en la pantalla"""
-        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
-        y = (self.winfo_screenheight() // 2) - (alto // 2)
-        self.geometry(f"{ancho}x{alto}+{x}+{y}")
+        # Reubicar en cada resize
+        self.bind("<Configure>", self.reubicar_elementos)
+
+    def reubicar_elementos(self, event=None):
+        """Mantener todo centrado al cambiar tamaño de ventana"""
+        w = self.winfo_width()
+        h = self.winfo_height()
+        cx, cy = w // 2, h // 2
+
+        # Logo
+        if self.logo_item:
+            self.canvas.coords(self.logo_item, cx, cy)
+
+        offset = -160  # desplazamiento vertical inicial
+        step = 40      # espacio entre filas
+
+        # Código
+        self.canvas.coords(self.text_codigo, cx - 150, cy + offset)
+        self.canvas.coords(self.entry_codigo_item, cx + 20, cy + offset)
+
+        # Nombre
+        self.canvas.coords(self.text_nombre, cx - 150, cy + offset + step)
+        self.canvas.coords(self.entry_nombre_item, cx + 20, cy + offset + step)
+
+        # Precio
+        self.canvas.coords(self.text_precio, cx - 150, cy + offset + step * 2)
+        self.canvas.coords(self.entry_precio_item, cx + 20, cy + offset + step * 2)
+
+        # Cantidad
+        self.canvas.coords(self.text_cantidad, cx - 195, cy + offset + step * 3)
+        self.canvas.coords(self.entry_cantidad_item, cx + 20, cy + offset + step * 3)
+
+        # Descripción
+        self.canvas.coords(self.text_descripcion, cx - 150, cy + offset + step * 4)
+        self.canvas.coords(self.entry_descripcion_item, cx, cy + offset + step * 6)
+
+        # Categoría
+        self.canvas.coords(self.text_categoria, cx - 150, cy + offset + step * 8)
+        self.canvas.coords(self.combo_categoria_item, cx, cy + offset + step * 8)
+        self.canvas.coords(self.boton_categoria_item, cx + 150, cy + offset + step * 8)
+
+        # Botón Guardar
+        self.canvas.coords(self.boton_guardar_item, cx, cy + offset + step * 10)
 
     def precargar_datos(self):
         self.codigo_entry.insert(0, self.producto["codigo"])
@@ -97,59 +126,50 @@ class VentanaProducto(tk.Toplevel):
         self.precio_entry.insert(0, str(self.producto["precio"]))
         self.descripcion_entry.insert("1.0", self.producto["descripcion"])
 
-        # Bloquear edición de código y cantidad
         self.codigo_entry.config(state="disabled")
         self.cantidad_entry.insert(0, str(self.producto["stock"]))
         self.cantidad_entry.config(state="disabled")
-        # Buscar categoría
+
         for idx, c in enumerate(self.categorias):
             if c[0] == self.producto["categoria_id"]:
                 self.categoria_cb.current(idx)
                 break
 
     def guardar_producto(self):
-
         try:
             codigo = self.codigo_entry.get().strip()
             nombre = self.nombre_entry.get().strip()
             precio = float(self.precio_entry.get())
             descripcion = self.descripcion_entry.get("1.0", tk.END).strip()
             cantidad_inicial = int(self.cantidad_entry.get().strip() or 0)
-            print(descripcion)
 
-            # Validaciones
             if cantidad_inicial < 0:
                 raise ValueError("La cantidad inicial no puede ser negativa.")
-
             if precio < 0:
                 raise ValueError("El precio no puede ser negativo.")
-            
             if len(descripcion) > 200:
                 raise ValueError("La descripción no puede superar los 200 caracteres.")
-            
-            # validar categoría seleccionada
+
             index = self.categoria_cb.current()
             if index == -1:
                 messagebox.showerror("Error", "Debe seleccionar una categoría")
                 return
-            id_categoria = self.categorias[index][0]  # obtiene el id_categoria
+            id_categoria = self.categorias[index][0]
 
             if not codigo or not nombre:
                 messagebox.showerror("Error", "Código y Nombre son obligatorios")
                 return
-            
-            if self.producto:  
-                # === EDITAR ===
+
+            if self.producto:
                 controlador_producto.update_product(
                     self.producto["id_producto"],
-                    self.producto["codigo"],   # usamos el código original
+                    self.producto["codigo"],
                     nombre,
                     descripcion,
                     precio,
                     id_categoria
                 )
                 messagebox.showinfo("Éxito", f"Producto '{nombre}' actualizado correctamente")
-
             else:
                 id_producto = controlador_producto.add_product(
                     codigo=codigo,
@@ -167,15 +187,12 @@ class VentanaProducto(tk.Toplevel):
                     )
                 messagebox.showinfo("Éxito", f"Producto '{nombre}' registrado correctamente")
 
-            # Refrescar tabla principal
             if self.on_complete_callback:
                 self.on_complete_callback()
             self.destroy()
 
         except ValueError as e:
             messagebox.showerror("Error", str(e))
-
-        # Captura otros errores
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo registrar: {e}")
 

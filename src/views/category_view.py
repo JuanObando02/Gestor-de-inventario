@@ -8,44 +8,69 @@ class VentanaCategorias(tk.Toplevel):
     def __init__(self, parent, on_update_callback):
         super().__init__(parent, bg="#B6B6B6")
         self.title("Gestionar Categorías")
-        self.geometry("300x300")
+        self.geometry("400x350")
         self.on_update_callback = on_update_callback
-        self.centrar_ventana(300, 300)
+        self.centrar_ventana(400, 350)
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
-        self.config(bg="#B6B6B6")
-         # Fondo con imagen/logo
-        # =====================
+
+        # === Canvas principal ===
+        self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
+        self.canvas.pack(fill="both", expand=True)
+
+        # === Fondo con logo ===
         try:
-            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")  # logo con transparencia
-            logo = logo.resize((200, 200), Image.LANCZOS)  # Ajustar tamaño
-            # Crear un nuevo canal alfa con menos opacidad
-            
+            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")
+            logo = logo.resize((200, 200), Image.LANCZOS)
             self.logo_tk = ImageTk.PhotoImage(logo)
-            
-            # Colocar en la ventana
-            self.bg_label = tk.Label(self, image=self.logo_tk, bg="#B6B6B6")
-            self.bg_label.place(relx=0.5, rely=0.5, anchor="center")
+            self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")
+            self.logo_item = None
 
-        # Frame para los widgets encima del fondo
-        frame = tk.Frame(self, bg="#B6B6B6")
-        frame.place(relx=0.5, rely=0.5, anchor="center")
+        # === Widgets sobre el canvas ===
+        self.text_lista = self.canvas.create_text(0, 0, text="Categorías:", fill="black", font=("Arial", 12, "bold"))
+        self.lista = tk.Listbox(self, width=30, height=10)
+        self.lista_item = self.canvas.create_window(0, 0, window=self.lista)
 
-        self.lista = tk.Listbox(self)
-        self.lista.pack(fill="both", expand=True, padx=10, pady=10)
+        self.btn_agregar = tk.Button(self, text="Agregar", bg="#4CAF50", fg="white", command=self.agregar_categoria)
+        self.btn_agregar_item = self.canvas.create_window(0, 0, window=self.btn_agregar)
 
+        self.btn_editar = tk.Button(self, text="Editar", bg="#FFA500", fg="black", command=self.editar_categoria)
+        self.btn_editar_item = self.canvas.create_window(0, 0, window=self.btn_editar)
+
+        self.btn_eliminar = tk.Button(self, text="Eliminar", bg="#D32F2F", fg="white", command=self.eliminar_categoria)
+        self.btn_eliminar_item = self.canvas.create_window(0, 0, window=self.btn_eliminar)
+
+        # Cargar categorías
         self.cargar_categorias()
 
-        tk.Button(self, text="Agregar", bg="#ffffff", command=self.agregar_categoria).pack(pady=5)
-        tk.Button(self, text="Editar", bg="#ffffff", command=self.editar_categoria).pack(pady=5)
-        tk.Button(self, text="Eliminar", bg="#210ed1", command=self.eliminar_categoria).pack(pady=5)
+        # Reposicionar al cambiar tamaño
+        self.bind("<Configure>", self.reubicar_elementos)
 
     def centrar_ventana(self, ancho=300, alto=400):
         """Centrar ventana en la pantalla"""
         x = (self.winfo_screenwidth() // 2) - (ancho // 2)
         y = (self.winfo_screenheight() // 2) - (alto // 2)
         self.geometry(f"{ancho}x{alto}+{x}+{y}")
+
+    def reubicar_elementos(self, event=None):
+        """Mantener todo centrado en la ventana"""
+        w = self.winfo_width()
+        h = self.winfo_height()
+        cx, cy = w // 2, h // 2
+
+        # Logo centrado
+        if self.logo_item:
+            self.canvas.coords(self.logo_item, cx, cy)
+
+        # Lista
+        self.canvas.coords(self.text_lista, cx, cy - 120)
+        self.canvas.coords(self.lista_item, cx, cy - 50)
+
+        # Botones
+        self.canvas.coords(self.btn_agregar_item, cx - 80, cy + 90)
+        self.canvas.coords(self.btn_editar_item, cx, cy + 90)
+        self.canvas.coords(self.btn_eliminar_item, cx + 80, cy + 90)
 
     def cargar_categorias(self):
         self.lista.delete(0, tk.END)
@@ -87,7 +112,7 @@ class VentanaCategorias(tk.Toplevel):
             try:
                 controlador_categoria.delete_categoria(cat_id)
                 messagebox.showinfo("Éxito", f"Categoría '{nombre}' eliminada correctamente.")
-                self.cargar_categorias()  # refrescar lista
+                self.cargar_categorias()
                 self.on_update_callback()
             except ValueError as e:
                 messagebox.showerror("Error", str(e))

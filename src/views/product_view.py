@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_categoria, controlador_movimiento
 from src.views.category_view import VentanaCategorias
+from PIL import Image, ImageTk
 
 class VentanaProducto(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback, producto=None):
@@ -12,6 +13,26 @@ class VentanaProducto(tk.Toplevel):
         self.user = user
         self.producto = producto 
         self.centrar_ventana(400, 500)
+        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        self.config(bg="#B6B6B6")
+         # Fondo con imagen/logo
+        # =====================
+        try:
+            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")  # logo con transparencia
+            logo = logo.resize((200, 200), Image.LANCZOS)  # Ajustar tamaño
+            # Crear un nuevo canal alfa con menos opacidad
+            
+            self.logo_tk = ImageTk.PhotoImage(logo)
+            
+            # Colocar en la ventana
+            self.bg_label = tk.Label(self, image=self.logo_tk, bg="#B6B6B6")
+            self.bg_label.place(relx=0.5, rely=0.5, anchor="center")
+        except Exception as e:
+            print(f"No se pudo cargar el logo: {e}")
+
+        # Frame para los widgets encima del fondo
+        frame = tk.Frame(self, bg="#B6B6B6")
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
         fuente = ("Arial", 12)
         # === Código ===

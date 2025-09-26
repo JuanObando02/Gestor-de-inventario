@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 from src.controllers import controlador_categoria
+from PIL import Image, ImageTk
 
 # === Ventana para gestionar categorías ===
 class VentanaCategorias(tk.Toplevel):
@@ -10,6 +11,26 @@ class VentanaCategorias(tk.Toplevel):
         self.geometry("300x300")
         self.on_update_callback = on_update_callback
         self.centrar_ventana(300, 300)
+        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        self.config(bg="#B6B6B6")
+         # Fondo con imagen/logo
+        # =====================
+        try:
+            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")  # logo con transparencia
+            logo = logo.resize((200, 200), Image.LANCZOS)  # Ajustar tamaño
+            # Crear un nuevo canal alfa con menos opacidad
+            
+            self.logo_tk = ImageTk.PhotoImage(logo)
+            
+            # Colocar en la ventana
+            self.bg_label = tk.Label(self, image=self.logo_tk, bg="#B6B6B6")
+            self.bg_label.place(relx=0.5, rely=0.5, anchor="center")
+        except Exception as e:
+            print(f"No se pudo cargar el logo: {e}")
+
+        # Frame para los widgets encima del fondo
+        frame = tk.Frame(self, bg="#B6B6B6")
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
         self.lista = tk.Listbox(self)
         self.lista.pack(fill="both", expand=True, padx=10, pady=10)

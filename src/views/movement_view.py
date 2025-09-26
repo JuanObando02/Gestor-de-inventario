@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_movimiento
+from PIL import Image, ImageTk
 
 class VentanaMovimientos(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback):
@@ -10,7 +11,26 @@ class VentanaMovimientos(tk.Toplevel):
         self.user = user
         self.on_complete_callback = on_complete_callback # Guarda la referencia a la función
         self.centrar_ventana(400, 350)
-        
+        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        self.config(bg="#B6B6B6")
+         # Fondo con imagen/logo
+        # =====================
+        try:
+            logo = Image.open("assets/images/Logo_con_nombre_100x126.png").convert("RGBA")  # logo con transparencia
+            logo = logo.resize((200, 200), Image.LANCZOS)  # Ajustar tamaño
+            # Crear un nuevo canal alfa con menos opacidad
+            
+            self.logo_tk = ImageTk.PhotoImage(logo)
+            
+            # Colocar en la ventana
+            self.bg_label = tk.Label(self, image=self.logo_tk, bg="#B6B6B6")
+            self.bg_label.place(relx=0.5, rely=0.5, anchor="center")
+        except Exception as e:
+            print(f"No se pudo cargar el logo: {e}")
+
+        # Frame para los widgets encima del fondo
+        frame = tk.Frame(self, bg="#B6B6B6")
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Producto
         tk.Label(self, text="Producto:").pack(pady=5)
@@ -22,6 +42,8 @@ class VentanaMovimientos(tk.Toplevel):
             width=30
         )
         self.producto_cb.pack()
+
+
 
         # Tipo de movimiento
         tk.Label(self, text="Tipo de movimiento:").pack(pady=5)

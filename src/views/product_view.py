@@ -20,8 +20,9 @@ class VentanaProducto(tk.Toplevel):
         self.canvas.pack(fill="both", expand=True)
 
         # Fondo con logo
-        try:
-
+        try: 
+            
+ 
             self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
 

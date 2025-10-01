@@ -21,9 +21,9 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
+            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion)
         else:
-            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir)
+            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
@@ -111,5 +111,13 @@ class MainApp:
     def exportar(self):
         messagebox.showinfo("Exportar", "Exportando...")
 
-    def salir(self):
-        self.root.quit()
+    def cerrar_sesion(self):
+        """Cerrar sesión y volver a la pantalla de login."""
+        self.root.destroy()  # cerrar ventana principal
+
+        import tkinter as tk
+        from src.views.login_view import LoginApp  
+
+        nueva_root = tk.Tk()
+        LoginApp(nueva_root)  # volver a la ventana de login
+        nueva_root.mainloop()

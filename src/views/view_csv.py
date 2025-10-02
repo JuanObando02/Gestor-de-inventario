@@ -5,6 +5,7 @@ import sqlite3
 import os
 from src.controllers import controlador_producto, controlador_movimiento
 from itertools import zip_longest
+from src.utils.path_utils import resource_path
 
 DB_PATH = os.path.join("data", "inventario.db")
 
@@ -24,6 +25,8 @@ class VentanaCargaCSV(tk.Toplevel):
         self.title("Importar CSV")
         self.geometry("800x500")
         self.configure(bg="#EAEAEA")
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         tk.Label(self, text="Importar productos desde CSV", font=("Arial", 14), bg="#EAEAEA").pack(pady=10)
 

@@ -8,7 +8,7 @@ from src.views.employee_view import VentanaEmpleado
 from src.views.movement_view import VentanaMovimientos
 from src.views.product_view import VentanaProducto
 from src.views.view_csv import VentanaCargaCSV
-
+from src.utils.path_utils import resource_path
 
 
 class MainApp:
@@ -19,7 +19,8 @@ class MainApp:
         self.root.geometry("900x600")
         self.centrar_ventana(900, 600)
         self.root.configure(bg="#B6B6B6")
-        self.root.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        root.iconphoto(False, tk.PhotoImage(file=icon_path))
         print("Página Principal")
 
         # estado inicial de orden
@@ -169,10 +170,10 @@ class MainApp:
     def calcular_y_actualizar_valor_inventario(self):
         try:
             #obtener todos los productos
-            #productos = controlador_producto.get_all_products()
+            productos = controlador_producto.get_all_products()
             valor_total = 0.0
             #bucar sobre los productos filtrados
-            for producto in self.productos_filtrados:
+            for producto in productos:
                 precio = float(producto.get("precio", 0))
                 stock = int(producto.get("stock", 0))
                 valor_total += precio * stock

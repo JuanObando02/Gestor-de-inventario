@@ -1,7 +1,13 @@
 # === Entorno virtual ===
 entorno/
+buildenv/
 
 # Ignorar cache de Python
 __pycache__/
 *.py[cod]
 *$py.class
+# carpetas de pyinstaller
+dist/
+build/
+# archivos de pyinstaller
+*.spec

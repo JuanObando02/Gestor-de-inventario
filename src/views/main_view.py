@@ -29,23 +29,20 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir, self.importar_csv)
+            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion, self.importar_csv)
         else:
-            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.salir, self.importar_csv)
-
+            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion, self.importar_csv)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
         # === Buscador y Filtros ===
-
         search_frame = tk.Frame(root, bg="#B6B6B6")
         search_frame.pack(pady=10)
-
         self.search_entry = tk.Entry(search_frame, width=40, bg="#ffffff")
         self.search_entry.grid(row=0, column=0, padx=5, pady=5)
+
         # Detectar cuando se presiona Enter
         self.search_entry.bind("<Return>", lambda event: self.buscar())
-
         tk.Button(search_frame, text="Buscar", command = self.buscar, bg="#ffffff").grid(row=0, column=1, padx=5)
 
         self.filtro = ttk.Combobox(search_frame, values=["Filtrar por","Categoría", "Nombre", "Codigo"])
@@ -58,11 +55,21 @@ class MainApp:
         for i in range(5):
             search_frame.grid_columnconfigure(i, weight=1)
 
-
         # === Tabla de Productos ===
-        # Crear tabla de productos
-        self.product_table = ProductTable(self.root, self)
-        self.product_table.pack(fill = "both", expand=True)
+        table_container = tk.Frame(self.root)
+        table_container.pack(fill="both", expand=True, padx=20, pady=10)
+
+        self.product_table = ProductTable(table_container, self)
+        self.product_table.pack(fill="both", expand=True)
+        self.valor_inventario_label = tk.Label(
+            self.root, 
+            text="Valor Total del Inventario: $0.00",
+            font=("Arial", 14, "bold"),
+            bg="#B6B6B6",  # Mismo color de fondo
+            fg="#333333"   # Color de texto oscuro para contraste
+        )
+
+        self.valor_inventario_label.pack(pady=(0, 10)) # Padding abajo
         # Cargar productos
         self.cargar_productos_en_tabla()
 
@@ -110,6 +117,7 @@ class MainApp:
             )
         # actualizar la lista actual en memoria
         self.productos_filtrados = productos
+        self.calcular_y_actualizar_valor_inventario()
 
     def buscar(self):
         """Filtra productos por lo que escriba el usuario en el search_entry."""
@@ -142,7 +150,7 @@ class MainApp:
 
     def importar_csv(self):
         """Abrir ventana para importar CSV"""
-        VentanaCargaCSV(self.root)
+        VentanaCargaCSV(self.root, self)
     
     def exportar(self):
         messagebox.showinfo("Exportar", "Exportando...")
@@ -157,3 +165,23 @@ class MainApp:
         nueva_root = tk.Tk()
         LoginApp(nueva_root)  # volver a la ventana de login
         nueva_root.mainloop()
+
+    def calcular_y_actualizar_valor_inventario(self):
+        try:
+            #obtener todos los productos
+            #productos = controlador_producto.get_all_products()
+            valor_total = 0.0
+            #bucar sobre los productos filtrados
+            for producto in self.productos_filtrados:
+                precio = float(producto.get("precio", 0))
+                stock = int(producto.get("stock", 0))
+                valor_total += precio * stock
+                
+            texto_formateado = f"${valor_total:,.2f}"
+            
+            self.valor_inventario_label.config(text=f"Valor Total del Inventario: {texto_formateado}")
+
+        except Exception as e:
+            
+            print(f"Error al calcular el valor del inventario: {e}")
+            self.valor_inventario_label.config(text="Valor Total del Inventario: Error de cálculo")

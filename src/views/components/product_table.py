@@ -3,20 +3,24 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto
 
 class ProductTable(tk.Frame):
+
     def __init__(self, parent, main_view):
         super().__init__(parent, bg="#B6B6B6")
         self.main_view = main_view
 
-        # === Tabla de Productos ===
+        # === Tabla de Productos con Scrollbar ===
+        scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
         self.tree = ttk.Treeview(
             self,
             columns=("codigo", "nombre", "categoria", "descripcion", "precio", "stock", "acciones"),
-            show="headings"
+            show="headings",
+            yscrollcommand=scrollbar.set
         )
-        
-        self.tree.pack(fill="both", expand=True, padx=20, pady=10)
+        scrollbar.config(command=self.tree.yview)
 
-        # Definir encabezados y columnas con ancho
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.tree.pack(fill="both", expand=True)
+
         self.tree.heading("codigo", text="Código")
         self.tree.column("codigo", width=40, anchor="center")
 
@@ -35,7 +39,6 @@ class ProductTable(tk.Frame):
         self.tree.heading("stock", text="Stock")
         self.tree.column("stock", width=50, anchor="center")
 
-        # Nueva columna de acciones
         self.tree.heading("acciones", text="Acciones")
         self.tree.column("acciones", width=100, anchor="center")
 
@@ -50,8 +53,6 @@ class ProductTable(tk.Frame):
             return
 
         producto = self.tree.item(item, "values")
-        
-        # Columna de acciones
 
         if col == "#7":  # la columna "acciones"
             # Aquí decides si es Editar o Eliminar según la posición del click
@@ -85,11 +86,9 @@ class ProductTable(tk.Frame):
                     # Recuperar producto de DB
                     productos = controlador_producto.get_all_products()
                     prod = next((p for p in productos if str(p["codigo"]) == str(codigo)), None)
-
                     if not prod:
                         messagebox.showerror("Error", "Producto no encontrado.")
                         return
-
                     # Confirmación
                     if messagebox.askyesno("Confirmar", f"¿Seguro que deseas eliminar {prod['nombre']}?"):
                         controlador_producto.delete_product(prod["id_producto"])

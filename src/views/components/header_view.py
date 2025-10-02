@@ -28,6 +28,6 @@ class Header(tk.Frame):
         tk.Button(ventana_botones, text="Registro", command = bt_registrar, bg="#ffffff")            .pack(side="left", padx=5)
         tk.Button(ventana_botones, text="Exportar", command = bt_exportar,  bg="#ffffff")            .pack(side="left", padx=5)
         tk.Button(self, text="Importar CSV", command = importar_csv, bg = "#ffffff")                 .pack(side="left", padx=5)
-        tk.Button(ventana_botones, text="Salir",    command = bt_salir,     bg="#357BB7", fg="white").pack(side="left", padx=5)
+        tk.Button(ventana_botones, text="Salir",    command = bt_cerrar_sesion,     bg="#357BB7", fg="white").pack(side="left", padx=5)
 
         

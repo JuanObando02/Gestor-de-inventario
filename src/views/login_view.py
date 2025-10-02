@@ -94,9 +94,3 @@ class LoginApp:
         else:
             messagebox.showerror("Error", "Usuario o contraseña incorrectos")
             print("Claves de acceso Incorrectar. Intente nuevamente.")
-
-        
-if __name__ == "__main__":
-    ventana_login = tkinter.Tk()
-    app = LoginApp(ventana_login)
-    ventana_login.mainloop()

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 from src.controllers import controlador_categoria
 from PIL import Image, ImageTk
+from src.utils.path_utils import resource_path
 
 # === Ventana para gestionar categorías ===
 class VentanaCategorias(tk.Toplevel):
@@ -11,7 +12,8 @@ class VentanaCategorias(tk.Toplevel):
         self.geometry("400x350")
         self.on_update_callback = on_update_callback
         self.centrar_ventana(400, 350)
-        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         # === Canvas principal ===
         self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
@@ -19,10 +21,9 @@ class VentanaCategorias(tk.Toplevel):
 
         # === Fondo con logo ===
         try:
-
-            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
+            logo_bg_path = resource_path("assets/images/Logo_BG.png")
+            self.logo_tk = ImageTk.PhotoImage(Image.open(logo_bg_path).convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
-
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")
             self.logo_item = None

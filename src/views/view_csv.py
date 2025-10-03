@@ -1,12 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
-import csv
-import openpyxl
-import sqlite3
-import os
+import csv, openpyxl, sqlite3, os
 from src.controllers import controlador_producto, controlador_movimiento
-from itertools import zip_longest
+from src.utils.path_utils import resource_path
 
 DB_PATH = os.path.join("data", "inventario.db")
 
@@ -27,7 +24,8 @@ class VentanaCargaCSV(tk.Toplevel):
         self.geometry("800x500")
         self.centrar_ventana(700, 500)
         self.configure(bg="#B6B6B6")
-        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         tk.Label(self, text="Importar Productos desde CSV", font=("Arial", 16, "bold"), bg="#B6B6B6").pack(pady=10)
 

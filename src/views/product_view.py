@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 from src.controllers import controlador_producto, controlador_categoria, controlador_movimiento
 from src.views.category_view import VentanaCategorias
 from PIL import Image, ImageTk
+from src.utils.path_utils import resource_path
 
 class VentanaProducto(tk.Toplevel):
     def __init__(self, parent, user, on_complete_callback, producto=None):
@@ -13,7 +14,8 @@ class VentanaProducto(tk.Toplevel):
         self.on_complete_callback = on_complete_callback
         self.user = user
         self.producto = producto
-        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         # Canvas que se expande
         self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
@@ -22,7 +24,8 @@ class VentanaProducto(tk.Toplevel):
         # Fondo con logo
         try:
 
-            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
+            logo_bg_path = resource_path("assets/images/Logo_BG.png")
+            self.logo_tk = ImageTk.PhotoImage(Image.open(logo_bg_path).convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
 
         except Exception as e:

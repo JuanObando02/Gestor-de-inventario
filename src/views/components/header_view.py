@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 from PIL import Image, ImageTk
+from src.utils.path_utils import resource_path
 
 class Header(tk.Frame):
 
@@ -11,7 +12,8 @@ class Header(tk.Frame):
         # la ventana se expande horizontalmente y se mantiene en la parte superior con fill="x"
 
         # --- Logo ---
-        imagen = Image.open("assets/images/Logo_blanco_80x100.png")
+        logo_path = resource_path("assets/images/Logo_blanco_80x100.png")
+        imagen = Image.open(logo_path)
         self.logo_img = ImageTk.PhotoImage(imagen)
 
         tk.Label(self, image=self.logo_img, bg="#357bb7").pack(side="left", padx=10, pady=10)

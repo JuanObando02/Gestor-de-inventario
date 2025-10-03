@@ -4,8 +4,9 @@ import hashlib, os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 from src.models.user import User
+from src.utils.path_utils import resource_path
 
-db_path = os.path.join("data", "inventario.db")
+db_path = resource_path("data/inventario.db")
 
 def get_connection(): 
     return sql.connect(db_path, timeout=10)

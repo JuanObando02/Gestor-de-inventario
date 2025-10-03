@@ -1,7 +1,8 @@
 import sqlite3 as sql
-import os
+import os, sys
+from src.utils.path_utils import resource_path
 
-db_path = os.path.join("data", "inventario.db")
+db_path = resource_path(os.path.join("data", "inventario.db"))
 
 def get_connection():
     return sql.connect(db_path, timeout=10)

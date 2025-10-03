@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox, filedialog
 from src.controllers import controlador_producto
 from src.views.components.header_view import Header
 from src.views.components.product_table import ProductTable
-from src.views.employee_view import VentanaEmpleado
+from src.views.employee_view import VentanaEmpleado, VentanaListaEmpleados
 from src.views.movement_view import VentanaMovimientos
 from src.views.product_view import VentanaProducto
 from src.views.view_csv import VentanaCargaCSV
@@ -28,9 +28,9 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
+            Header(root, self.crear_empleado, self.crear_empleado, self.ver_empleados, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
         else:
-            Header(root, None, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
+            Header(root, None, None,  None, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
@@ -91,6 +91,9 @@ class MainApp:
 
     def crear_empleado(self):
         VentanaEmpleado(self.root)
+
+    def ver_empleados(self):
+        VentanaListaEmpleados(self.root, self.user)
 
     def registro_producto(self):
         VentanaProducto(self.root, self.user, self.cargar_productos_en_tabla)

@@ -36,21 +36,17 @@ class VentanaEmpleado(tk.Toplevel):
 
         # Rol
         self.text_rol = self.canvas.create_text(0, 0, text="Rol:", fill="black", font=("Arial", 12, "bold"))
-        self.rol_var = tk.StringVar(value="empleado")
-        roles = ["administrador", "empleado"]
+        usuarios_existentes = controlador_usuario.list_users()
+        default_rol = "administrador" if not usuarios_existentes else "empleado"
+
+        self.rol_var = tk.StringVar(value=default_rol)
+        roles = ["admin", "empleado"]
         self.rol = ttk.Combobox(self, textvariable=self.rol_var, values=roles, state="readonly", width=18)
         self.rol_item = self.canvas.create_window(0, 0, window=self.rol)
 
         # Botón Crear/Actualizar
         btn_text = "Crear" if not usuario else "Actualizar"
-        self.btn_crear = tk.Button(
-            self,
-            text=btn_text,
-            command=self.crear_o_actualizar_usuario,
-            bg="#12A617",
-            fg="white",
-            font=("Arial", 12, "bold")
-        )
+        self.btn_crear = tk.Button(self, text=btn_text, command=self.crear_o_actualizar_usuario, bg="#12A617", fg="white", font=("Arial", 12, "bold"))
         self.btn_item = self.canvas.create_window(0, 0, window=self.btn_crear)
 
         # Reubicar al cambiar tamaño de ventana
@@ -116,8 +112,11 @@ class VentanaListaEmpleados(tk.Toplevel):
         self.current_user = current_user
         self.title("Lista de Empleados")
         self.geometry("450x300")
+        self.configure(bg="#357BB7")
         self.centrar_ventana(450, 300)
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+
+        tk.Label (self, text=f"Lista de Empleados", font=("Arial", 24, "bold"), bg="#357BB7") .pack(pady=20)
 
         self.tree = ttk.Treeview(self, columns=("Usuario", "Rol", "Acciones"), show="headings")
         self.tree.heading("Usuario", text="Usuario")

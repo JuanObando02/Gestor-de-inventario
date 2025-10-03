@@ -1,1 +1,2 @@
 PIL== pillow  11.3.0
+openpyxl==3.1.5

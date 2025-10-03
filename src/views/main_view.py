@@ -8,8 +8,7 @@ from src.views.employee_view import VentanaEmpleado
 from src.views.movement_view import VentanaMovimientos
 from src.views.product_view import VentanaProducto
 from src.views.view_csv import VentanaCargaCSV
-
-
+from src.views.view_csv import VentanaExportar
 
 class MainApp:
     def __init__(self, root, user):
@@ -29,9 +28,9 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion, self.importar_csv)
+            Header(root, self.crear_empleado, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
         else:
-            Header(root, None, self.registro_producto, self.abrir_movimiento, self.exportar, self.cerrar_sesion, self.importar_csv)
+            Header(root, None, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 
@@ -152,8 +151,8 @@ class MainApp:
         """Abrir ventana para importar CSV"""
         VentanaCargaCSV(self.root, self)
     
-    def exportar(self):
-        messagebox.showinfo("Exportar", "Exportando...")
+    def exportar_archivo(self):
+        VentanaExportar(self.root, self)
 
     def cerrar_sesion(self):
         """Cerrar sesión y volver a la pantalla de login."""

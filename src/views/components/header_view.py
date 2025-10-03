@@ -41,8 +41,8 @@ class Header(tk.Frame):
         gestion_archivos_btn.menu = tk.Menu(gestion_archivos_btn, tearoff=0)
         gestion_archivos_btn["menu"] = gestion_archivos_btn.menu
 
-        gestion_archivos_btn.menu.add_command(label="Importar CSV", command=importar_csv)
-        gestion_archivos_btn.menu.add_command(label="Exportar CSV", command=exportar_archivo)
+        gestion_archivos_btn.menu.add_command(label="Importar Archivo", command=importar_csv)
+        gestion_archivos_btn.menu.add_command(label="Exportar Archivo", command=exportar_archivo)
         gestion_archivos_btn.pack(side="left", padx=5)
 
         

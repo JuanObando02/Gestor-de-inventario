@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+from PIL import Image, ImageTk
 import csv
 import openpyxl
 import sqlite3
@@ -25,12 +26,12 @@ class VentanaCargaCSV(tk.Toplevel):
         self.title("Importar CSV")
         self.geometry("800x500")
         self.centrar_ventana(700, 500)
-        self.configure(bg="#EAEAEA")
+        self.configure(bg="#B6B6B6")
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
 
-        tk.Label(self, text="Importar productos desde CSV", font=("Arial", 14), bg="#EAEAEA").pack(pady=10)
+        tk.Label(self, text="Importar Productos desde CSV", font=("Arial", 16, "bold"), bg="#B6B6B6").pack(pady=10)
 
-        btn_frame = tk.Frame(self, bg="#EAEAEA")
+        btn_frame = tk.Frame(self, bg="#B6B6B6")
         btn_frame.pack(pady=5)
 
         tk.Button(btn_frame, text="Seleccionar archivo CSV", command=self.cargar_csv).grid(row=0, column=0, padx=5)
@@ -49,7 +50,7 @@ class VentanaCargaCSV(tk.Toplevel):
         self.btn_import.config(state="disabled")
 
         # ---------- Mensaje de contexto encima de la tabla ----------
-        self.info_frame = tk.Frame(self, bg="#FFF8DC", bd=1, relief="solid", padx=8, pady=6)
+        self.info_frame = tk.Frame(self, bg="#357BB7", bd=1, relief="solid", padx=8, pady=6)
         self.info_frame.pack(fill="x", padx=10, pady=(8, 6))
 
         info_text = (
@@ -65,10 +66,10 @@ class VentanaCargaCSV(tk.Toplevel):
             "- Filas vacías o mal formateadas se marcarán en rojo y bloquearán la importación.\n"
         )
 
-        lbl_info = tk.Label(self.info_frame, text=info_text, justify="left", anchor="w", bg="#FFF8DC")
+        lbl_info = tk.Label(self.info_frame, text=info_text, justify="left", anchor="w", font=("Arial", 10), fg="white", bg="#357BB7")
         lbl_info.pack(side="left", fill="x", expand=True)
 
-        btn_right_frame = tk.Frame(self.info_frame, bg="#FFF8DC")
+        btn_right_frame = tk.Frame(self.info_frame, bg="#357BB7")
         btn_right_frame.pack(side="right", anchor="n")
 
         # Botón para ver un ejemplo y poder guardarlo
@@ -110,7 +111,11 @@ class VentanaCargaCSV(tk.Toplevel):
         self.tree.pack(fill="both", expand=True)
 
         self.current_file = None
-    
+
+        self.transient(master)
+        self.grab_set()
+        self.focus()
+        
     def centrar_ventana(self, ancho=300, alto=400):
         """Centrar ventana en la pantalla"""
         x = (self.winfo_screenwidth() // 2) - (ancho // 2)
@@ -429,6 +434,7 @@ class VentanaCargaCSV(tk.Toplevel):
                                 stock = vals[5] if len(vals)>5 else ""
                                 writer.writerow([codigo,nombre,categoria,descripcion,precio,stock,"Fila con datos inválidos o faltantes"])
                         messagebox.showinfo("Exportado", f"Filas con errores exportadas a: {save_path}")
+
                     except Exception as e:
                         messagebox.showerror("Error exportar", f"No se pudo exportar:\n{e}")
             return  # bloqueamos la importación
@@ -547,6 +553,9 @@ class VentanaCargaCSV(tk.Toplevel):
         # actualizar estado del botón importar y demás
         self.actualizar_estado_importar()
 
+        if inserted:
+            self.destroy()
+
     def mostrar_ejemplo(self):
         """Muestra un ejemplo corto de CSV y permite guardarlo."""
         ejemplo_lines = [
@@ -597,17 +606,63 @@ class VentanaExportar(tk.Toplevel):
     def __init__(self, master, main_app=None):
         super().__init__(master)
         self.main_app = main_app
-        self.title("Exportar productos")
+        self.title("Exportar Productos")
         self.geometry("400x250")
-        self.centrar_ventana(300, 200)
-        self.configure(bg="#EAEAEA")
+        self.centrar_ventana(400, 300)
         self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
 
+        # Canvas principal
+        self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
+        self.canvas.pack(fill="both", expand=True)
 
-        tk.Label(self, text="Exportar productos", font=("Arial", 14), bg="#EAEAEA").pack(pady=10)
+        # Fondo con logo
+        try:
+            self.logo_tk = ImageTk.PhotoImage(
+                Image.open("assets/images/Logo_BG.png").convert("RGBA")
+            )
+            self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
+        except Exception as e:
+            print(f"No se pudo cargar el logo: {e}")
+            self.logo_item = None
 
-        tk.Button(self, text="Exportar a CSV", command=self.exportar_csv, bg="#ffffff").pack(pady=10)
-        tk.Button(self, text="Exportar a Excel", command=self.exportar_excel, bg="#ffffff").pack(pady=10)
+        # Título
+        self.text_titulo = self.canvas.create_text(
+            0, 0,
+            text="Exportar productos",
+            fill="black",
+            font=("Arial", 16, "bold")
+        )
+
+        # Botones
+        self.btn_csv = tk.Button(
+            self, text="Exportar como CSV",
+            command=self.exportar_csv,
+            font=("Arial", 12)
+        )
+        self.btn_csv_item = self.canvas.create_window(0, 0, window=self.btn_csv)
+
+        self.btn_excel = tk.Button(
+            self, text="Exportar como Excel",
+            command=self.exportar_excel,
+            font=("Arial", 12)
+        )
+        self.btn_excel_item = self.canvas.create_window(0, 0, window=self.btn_excel)
+
+        # Reubicar al cambiar tamaño
+        self.bind("<Configure>", self.reubicar_elementos)
+
+    def reubicar_elementos(self, event=None):
+        """Centrar el contenido en la ventana"""
+        w = self.winfo_width()
+        h = self.winfo_height()
+        cx, cy = w // 2, h // 2
+
+        if self.logo_item:
+            self.canvas.coords(self.logo_item, cx, cy)
+
+        self.canvas.coords(self.text_titulo, cx, cy - 60)
+        self.canvas.coords(self.btn_csv_item, cx, cy)
+        self.canvas.coords(self.btn_excel_item, cx, cy + 50)
 
     def centrar_ventana(self, ancho=300, alto=400):
         """Centrar ventana en la pantalla"""
@@ -651,7 +706,7 @@ class VentanaExportar(tk.Toplevel):
         
         self.destroy()
 
-    # --- Exportar como CSV ---
+    # --- Exportar como Excel ---
     def exportar_excel(self):
         productos = controlador_producto.get_all_products()
         if not productos:

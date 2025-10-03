@@ -1,10 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-import csv
-import sqlite3
-import os
+import csv, openpyxl, sqlite3, os
 from src.controllers import controlador_producto, controlador_movimiento
-from itertools import zip_longest
 from src.utils.path_utils import resource_path
 
 DB_PATH = os.path.join("data", "inventario.db")
@@ -24,6 +21,7 @@ class VentanaCargaCSV(tk.Toplevel):
         self.main_app = main_app  # puede ser None; en MainApp pasar self
         self.title("Importar CSV")
         self.geometry("800x500")
+        self.centrar_ventana(700, 500)
         self.configure(bg="#EAEAEA")
         icon_path = resource_path("assets/images/Logo_icon.png")
         self.iconphoto(False, tk.PhotoImage(file=icon_path))
@@ -110,6 +108,12 @@ class VentanaCargaCSV(tk.Toplevel):
         self.tree.pack(fill="both", expand=True)
 
         self.current_file = None
+    
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
 
     def limpiar_tabla(self):
         for row in self.tree.get_children():
@@ -582,3 +586,105 @@ class VentanaCargaCSV(tk.Toplevel):
             messagebox.showinfo("Guardado", f"Ejemplo guardado en:\n{path}")
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el ejemplo:\n{e}")
+
+class VentanaExportar(tk.Toplevel):
+    """
+    Ventana para exportar productos de la base de datos a CSV o Excel.
+    """
+
+    def __init__(self, master, main_app=None):
+        super().__init__(master)
+        self.main_app = main_app
+        self.title("Exportar productos")
+        self.geometry("400x250")
+        self.centrar_ventana(300, 200)
+        self.configure(bg="#EAEAEA")
+        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+
+
+        tk.Label(self, text="Exportar productos", font=("Arial", 14), bg="#EAEAEA").pack(pady=10)
+
+        tk.Button(self, text="Exportar a CSV", command=self.exportar_csv, bg="#ffffff").pack(pady=10)
+        tk.Button(self, text="Exportar a Excel", command=self.exportar_excel, bg="#ffffff").pack(pady=10)
+
+    def centrar_ventana(self, ancho=300, alto=400):
+        """Centrar ventana en la pantalla"""
+        x = (self.winfo_screenwidth() // 2) - (ancho // 2)
+        y = (self.winfo_screenheight() // 2) - (alto // 2)
+        self.geometry(f"{ancho}x{alto}+{x}+{y}")
+
+    # --- Exportar como CSV ---
+    def exportar_csv(self):
+        productos = controlador_producto.get_all_products()
+        if not productos:
+            messagebox.showinfo("Exportar", "No hay productos para exportar.")
+            return
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV files", "*.csv")],
+            title="Guardar archivo como",
+            initialfile="productos_exportados.csv"
+        )
+        if not file_path:
+            self.destroy()
+            return
+
+        try:
+            with open(file_path, mode="w", newline="", encoding="utf-8") as file:
+                writer = csv.writer(file)
+                writer.writerow(["codigo", "nombre", "nombre_categoria", "descripcion", "precio", "stock"])
+                for p in productos:
+                    writer.writerow([
+                        p.get("codigo", ""),
+                        p.get("nombre", ""),
+                        p.get("nombre_categoria", ""),
+                        p.get("descripcion", ""),
+                        p.get("precio", ""),
+                        p.get("stock", "")
+                    ])
+            messagebox.showinfo("Exportar", f"Productos exportados en:\n{file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo exportar el CSV:\n{e}")
+        
+        self.destroy()
+
+    # --- Exportar como CSV ---
+    def exportar_excel(self):
+        productos = controlador_producto.get_all_products()
+        if not productos:
+            messagebox.showinfo("Exportar", "No hay productos para exportar.")
+            return
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx")],
+            title="Guardar archivo como",
+            initialfile="productos_exportados.xlsx"
+        )
+        if not file_path:
+            self.destroy()
+            return
+
+        try:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Productos"
+
+            ws.append(["codigo", "nombre", "nombre_categoria", "descripcion", "precio", "stock"])
+            for p in productos:
+                ws.append([
+                    p.get("codigo", ""),
+                    p.get("nombre", ""),
+                    p.get("nombre_categoria", ""),
+                    p.get("descripcion", ""),
+                    p.get("precio", ""),
+                    p.get("stock", "")
+                ])
+
+            wb.save(file_path)
+            messagebox.showinfo("Exportar", f"Productos exportados en:\n{file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo exportar el Excel:\n{e}")
+        
+        self.destroy()

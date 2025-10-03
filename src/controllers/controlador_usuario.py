@@ -47,3 +47,30 @@ def validate_login(username, password):
     if user and user.password == hash_password(password):
         return user
     return None
+
+def list_users():
+    """Devuelve una lista de todos los usuarios como tuplas (id_usuario, usuario, rol)"""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id_usuario, usuario, rol FROM usuarios")
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def update_user(usuario, password, rol):
+    conn = get_connection()
+    cur = conn.cursor()
+    if password:  # actualizar también contraseña si se da
+        cur.execute("UPDATE usuarios SET password=?, rol=? WHERE usuario=?",
+                    (hash_password(password), rol, usuario))
+    else:      # solo rol
+        cur.execute("UPDATE usuarios SET rol=? WHERE usuario=?", (rol, usuario))
+    conn.commit()
+    conn.close()
+
+def delete_user(id_usuario):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM usuarios WHERE id_usuario=?", (id_usuario,))
+    conn.commit()
+    conn.close()

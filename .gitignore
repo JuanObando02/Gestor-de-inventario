@@ -7,7 +7,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 # carpetas de pyinstaller
-dist/
 build/
+dist/MiniStock/
 # archivos de pyinstaller
 *.spec

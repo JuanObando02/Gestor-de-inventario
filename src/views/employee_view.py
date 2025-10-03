@@ -20,7 +20,6 @@ class VentanaEmpleado(tk.Toplevel):
 
         # Fondo con logo
         try:
-            self.logo_tk = ImageTk.PhotoImage(Image.open("assets/images/Logo_BG.png").convert("RGBA"))
             logo_bg_path = resource_path("assets/images/Logo_BG.png")
             self.logo_tk = ImageTk.PhotoImage(Image.open(logo_bg_path).convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
@@ -117,7 +116,8 @@ class VentanaListaEmpleados(tk.Toplevel):
         self.geometry("450x300")
         self.configure(bg="#357BB7")
         self.centrar_ventana(450, 300)
-        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         tk.Label (self, text=f"Lista de Empleados", font=("Arial", 24, "bold"), bg="#357BB7") .pack(pady=20)
 

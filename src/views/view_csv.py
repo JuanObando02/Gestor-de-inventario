@@ -5,7 +5,7 @@ import csv, openpyxl, sqlite3, os
 from src.controllers import controlador_producto, controlador_movimiento
 from src.utils.path_utils import resource_path
 
-DB_PATH = os.path.join("data", "inventario.db")
+db_path = resource_path("data/inventario.db")
 
 class VentanaCargaCSV(tk.Toplevel):
     """
@@ -266,23 +266,7 @@ class VentanaCargaCSV(tk.Toplevel):
         self.actualizar_estado_importar()
 
     def _obtener_user_id(self):
-        """Intenta obtener id de usuario desde main_app.user; si no, fallback a 1."""
-        if self.main_app:
-            user = getattr(self.main_app, "user", None)
-            # el objeto user en tu proyecto parece tener .id o .id_usuario o .role; intentamos varias formas
-            if isinstance(user, dict):
-                for key in ("id_usuario", "id", "user_id"):
-                    if key in user:
-                        return int(user[key])
-            else:
-                for attr in ("id_usuario", "id", "user_id"):
-                    if hasattr(user, attr):
-                        try:
-                            return int(getattr(user, attr))
-                        except Exception:
-                            pass
-        # fallback
-        return 1
+        return self.main_app.user.id_user
 
     def _categoria_to_id(self, nombre_cat, db_conn):
         """
@@ -487,7 +471,7 @@ class VentanaCargaCSV(tk.Toplevel):
         errores = []
 
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=10)
+            conn = sqlite3.connect(db_path, timeout=10)
             # mantenemos la conexión para _categoria_to_id (esa función usa la conexión pasada)
             for p in productos:
                 codigo = p["codigo"]

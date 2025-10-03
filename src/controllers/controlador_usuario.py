@@ -1,8 +1,5 @@
 import sqlite3 as sql
 import hashlib, os, sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-
 from src.models.user import User
 from src.utils.path_utils import resource_path
 
@@ -12,66 +9,61 @@ def get_connection():
     return sql.connect(db_path, timeout=10)
 
 def hash_password(password):
+    """Hash SHA-256 de la contraseña"""
     return hashlib.sha256(password.encode()).hexdigest()
-#se usa sha256 para hashear la contraseña y encode para convertirla a bytes.
-#con hexdigest se obtiene la representacion en hexadecimal del hash.
 
 def insert_user(username, password, role):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO Usuarios (usuario, password, rol) VALUES (?, ?, ?)",
-        (username, hash_password(password), role)
-    )
-    conn.commit()
-    conn.close()
+    """Inserta un usuario. Lanza la excepción de sqlite si falla (p. ej. UNIQUE)."""
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO Usuarios (usuario, password, rol) VALUES (?, ?, ?)",
+            (username, hash_password(password), role)
+        )
 
 def get_user(username):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT id_usuario, usuario, password, rol FROM usuarios WHERE usuario = ?",
-        (username,)
-    )
-
-    row = cur.fetchone()
-    conn.close()
-    
-    #si row no es None, crea y retorna un objeto User
+    """Devuelve un objeto User o None"""
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id_usuario, usuario, password, rol FROM Usuarios WHERE usuario = ?",
+            (username,)
+        )
+        row = cur.fetchone()
     if row:
         return User(*row)
     return None
 
 def validate_login(username, password):
+    """Valida credenciales y devuelve el User si son correctas"""
     user = get_user(username)
-    # validar si el usuario fue retornado y si la contraseña hasheada coincide. 
-    if user and user.password == hash_password(password):
+    if user.password == hash_password(password):
         return user
     return None
 
 def list_users():
     """Devuelve una lista de todos los usuarios como tuplas (id_usuario, usuario, rol)"""
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT id_usuario, usuario, rol FROM usuarios")
-    rows = cur.fetchall()
-    conn.close()
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id_usuario, usuario, rol FROM Usuarios")
+        rows = cur.fetchall()
     return rows
 
 def update_user(usuario, password, rol):
-    conn = get_connection()
-    cur = conn.cursor()
-    if password:  # actualizar también contraseña si se da
-        cur.execute("UPDATE usuarios SET password=?, rol=? WHERE usuario=?",
-                    (hash_password(password), rol, usuario))
-    else:      # solo rol
-        cur.execute("UPDATE usuarios SET rol=? WHERE usuario=?", (rol, usuario))
-    conn.commit()
-    conn.close()
+    """Actualiza la contraseña y/o rol de un usuario"""
+    with get_connection() as conn:
+        cur = conn.cursor()
+        if password:  # actualizar también contraseña si se proporciona
+            cur.execute(
+                "UPDATE Usuarios SET password = ?, rol = ? WHERE usuario = ?",
+                (hash_password(password), rol, usuario)
+            )
+        else:
+            cur.execute("UPDATE Usuarios SET rol = ? WHERE usuario = ?", (rol, usuario))
+        # commit implícito
 
 def delete_user(id_usuario):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM usuarios WHERE id_usuario=?", (id_usuario,))
-    conn.commit()
-    conn.close()
+    """Elimina un usuario por id"""
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM Usuarios WHERE id_usuario = ?", (id_usuario,))

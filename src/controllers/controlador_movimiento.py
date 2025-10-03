@@ -6,7 +6,6 @@ from src.utils.path_utils import resource_path
 db_path = resource_path("data/inventario.db")
 
 def get_connection():
-    # Agregamos timeout para esperar si la DB está ocupada
     return sql.connect(db_path, timeout=10)
 
 def registrar_movimiento(id_producto, id_usuario, tipo, cantidad):
@@ -48,5 +47,4 @@ def registrar_movimiento(id_producto, id_usuario, tipo, cantidad):
 
         # actualizar stock si todo esta correcto
         cursor.execute("UPDATE Stock SET cantidad = ? WHERE id_producto = ?", (nuevo_stock, id_producto))
-
-        conn.commit()
+    print(f"Movimiento de {tipo} registrado para producto {id_producto}. Nuevo stock: {nuevo_stock}")

@@ -607,7 +607,8 @@ class VentanaExportar(tk.Toplevel):
         self.title("Exportar Productos")
         self.geometry("400x250")
         self.centrar_ventana(400, 300)
-        self.iconphoto(False, tk.PhotoImage(file="assets/images/Logo_icon.png"))
+        icon_path = resource_path("assets/images/Logo_icon.png")
+        self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         # Canvas principal
         self.canvas = tk.Canvas(self, highlightthickness=0, bg="#B6B6B6")
@@ -615,9 +616,8 @@ class VentanaExportar(tk.Toplevel):
 
         # Fondo con logo
         try:
-            self.logo_tk = ImageTk.PhotoImage(
-                Image.open("assets/images/Logo_BG.png").convert("RGBA")
-            )
+            logo_bg_path = resource_path("assets/images/Logo_BG.png")
+            self.logo_tk = ImageTk.PhotoImage(Image.open(logo_bg_path).convert("RGBA"))
             self.logo_item = self.canvas.create_image(0, 0, image=self.logo_tk, anchor="center")
         except Exception as e:
             print(f"No se pudo cargar el logo: {e}")

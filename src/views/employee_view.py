@@ -62,7 +62,7 @@ class VentanaEmpleado(tk.Toplevel):
             self.entry_usuario.insert(0, usuario)
             user_obj = controlador_usuario.get_user(usuario)
             if user_obj:
-                self.rol_var.set(user_obj.rol)
+                self.rol_var.set(user_obj.role)
 
     def crear_o_actualizar_usuario(self):
         usuario = self.entry_usuario.get()
@@ -107,7 +107,6 @@ class VentanaEmpleado(tk.Toplevel):
         x = (self.winfo_screenwidth() // 2) - (ancho // 2)
         y = (self.winfo_screenheight() // 2) - (alto // 2)
         self.geometry(f"{ancho}x{alto}+{x}+{y}")
-
 
 class VentanaListaEmpleados(tk.Toplevel):
     """Lista de empleados con acciones de editar y eliminar"""

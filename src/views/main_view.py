@@ -30,9 +30,9 @@ class MainApp:
 
         # === Encabezado ===
         if self.user.role == "admin":
-            Header(root, self.crear_empleado, self.crear_empleado, self.ver_empleados, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
+            Header(root, self.crear_empleado, self.ver_empleados, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
         else:
-            Header(root, None, None,  None, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
+            Header(root, None,  None, self.registro_producto, self.abrir_movimiento, self.cerrar_sesion, self.importar_csv, self.exportar_archivo)
 
         tk.Label (root, text=f"Bienvenido", font=("Arial", 24), bg="#B6B6B6") .pack(pady=20)
 

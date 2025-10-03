@@ -88,6 +88,7 @@ def get_all_products():
                 FROM Productos p
                 LEFT JOIN Stock s ON p.id_producto = s.id_producto
                 LEFT JOIN Categorias c ON p.id_categoria = c.id_categoria
+                ORDER BY p.codigo
             """)
 
         rows = cur.fetchall()
